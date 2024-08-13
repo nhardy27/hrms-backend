@@ -9,9 +9,9 @@ if ENV == "local":
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.local')
 elif ENV == "development":
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.development')
-elif ENV == "sandbox":
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.sandbox')
-elif ENV == "prod":
+elif ENV == "stage":
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.stage')
+elif ENV == "production":
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.production')
 
 

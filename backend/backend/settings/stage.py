@@ -3,17 +3,17 @@ import os
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
-USER = os.getenv("P_USER")
-HOST = os.getenv("P_HOST")
-PORT = os.getenv("P_PORT")
-DB = os.getenv("P_DB")
-PASS = os.getenv("P_PASS")
+USER = os.getenv("S_USER")
+HOST = os.getenv("S_HOST")
+PORT = os.getenv("S_PORT")
+DB = os.getenv("S_DB")
+PASS = os.getenv("S_PASS")
 
 DEBUG = False
-ALLOWED_HOSTS = [ "https://placeholder.humbingo.in"]
+ALLOWED_HOSTS = [ "https://placeholder-stage.humbingo.in"]
 
 CORS_ALLOWED_ORIGINS = [ 
-    "https://placeholder.humbingo.in",
+    "https://placeholder-stage.humbingo.in",
 ]
 
 DATABASES = {
