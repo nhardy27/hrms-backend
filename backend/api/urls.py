@@ -5,6 +5,7 @@ from api.Permission import view as permissionView
 from api.Role import view as roleView
 from api.User import view as userView
 from api.TestAPI import view as TestView
+from api.Address import view as AddressView
 
 
 from rest_framework import routers
@@ -16,7 +17,8 @@ router=routers.DefaultRouter()
 router.register(r'user',userView.UserViewset, basename='user'),
 router.register(r'role',roleView.RoleViewset, basename='role'),
 router.register(r'permission', permissionView.PermissionViewset, basename='permission'),
-router.register(r'testAPI', TestView.TestViewset, basename='testAPI'),
+router.register(r'test', TestView.TestViewset, basename='test'),
+router.register(r'address',AddressView.AddressViewset,basename='address'),
 
 
 # Create a schema view for drf-yasg

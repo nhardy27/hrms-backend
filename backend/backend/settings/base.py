@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'drf_yasg',
+    'django_seed',
     'api',
     'security',
 
