@@ -19,8 +19,8 @@ django-placehoder includes
 - permissions, roles
 - security app(for token and authentication)
 - seed data and fakers
-- display refrenece name for FK (code is in serializer)
-- CORS headder and paggination
+- display reference name for FK (code is in serializer)
+- CORS header and pagination
 - static files
 
 
