@@ -18,13 +18,14 @@ django-placehoder includes
 - swagger
 - permissions, roles
 - security app(for token and authentication)
+- seed data and fakers
+- display refrenece name for FK (code is in serializer)
 
 
 #TODO
-- seed data and fakers
 - static files
 - CORS headder and paggination
-- display refrenece name fo FK
+
 
 
 seed_files
