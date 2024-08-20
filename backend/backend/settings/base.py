@@ -6,7 +6,6 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY =os.getenv("SECRET_KEY")
-SECRET_KEY = 'django-insecure-w(#k=^4=$@1-baz-a0k&t6t5_2f_i-=a9-=6_jwzr-lzm9_m0r'
 
 
 INSTALLED_APPS = [
@@ -21,6 +20,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_extensions',
     'django_filters',
+    'drf_yasg',
     'api',
     'security'
 
