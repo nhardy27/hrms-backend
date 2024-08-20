@@ -20,11 +20,9 @@ django-placehoder includes
 - security app(for token and authentication)
 - seed data and fakers
 - display refrenece name for FK (code is in serializer)
-
-
-#TODO
-- static files
 - CORS headder and paggination
+- static files
+
 
 
 

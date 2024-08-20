@@ -42,7 +42,19 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backend.urls'
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = os.getenv("STATIC_URL",'static/')
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+
+
+
+STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
+# Static files (CSS, JavaScript, Images)
+STATICFILES_DIRS_PATH = os.getenv('STATICFILES_DIRS_PATH', 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, STATICFILES_DIRS_PATH),
+]
+
+
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -167,9 +179,9 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'khyati.humbingo@gmail.com'
-EMAIL_HOST_PASSWORD = 'sefh jpki fucj xkxu'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'khyati.humbingo@gmail.com'
+# EMAIL_HOST_PASSWORD = 'sefh jpki fucj xkxu'
