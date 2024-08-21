@@ -1,3 +1,5 @@
-from django.shortcuts import render
+from rest_framework_simplejwt.views import TokenRefreshView
+from .serializers import CustomTokenRefreshSerializer
 
-# Create your views here.
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = CustomTokenRefreshSerializer

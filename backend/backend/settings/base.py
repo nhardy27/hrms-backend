@@ -5,10 +5,7 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-DEBUG = True
-ALLOWED_HOSTS = ["*"]
-SECRET_KEY = 'django-insecure-w(#k=^4=$@1-baz-a0k&t6t5_2f_i-=a9-=6_jwzr-lzm9_m0r'
+SECRET_KEY =os.getenv("SECRET_KEY")
 
 
 INSTALLED_APPS = [
@@ -23,8 +20,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_extensions',
     'django_filters',
+    'drf_yasg',
+    'django_seed',
     'api',
-    'security'
+    'security',
 
 ]
 
@@ -42,8 +41,20 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+STATIC_URL = os.getenv("STATIC_URL",'static/')
+
+
+
+STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
+# Static files (CSS, JavaScript, Images)
+STATICFILES_DIRS_PATH = os.getenv('STATICFILES_DIRS_PATH', 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, STATICFILES_DIRS_PATH),
+]
+
+
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -79,29 +90,28 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE",'en-us')
+TIME_ZONE = os.getenv("TIME_ZONE",'UTC')
 USE_I18N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-REST_FRAMEWORK = { 
-                
-        'DEFAULT_PERMISSION_CLASSES': [
-            'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-            'base.api.permission.CustomPermission'
-        ],
-        'DEFAULT_AUTHENTICATION_CLASSES': (
-            # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-            'base.authentication.MyCustomJWTAuthentication',
+REST_FRAMEWORK = {        
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
-        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE': 50,  # You can set the page size as needed
-    #  'DEFAULT_PERMISSION_CLASSES': [
-    #         'rest_framework.permissions.IsAuthenticated',
-    #     ]
+        
+    'DEFAULT_PERMISSION_CLASSES': [
+            'rest_framework.permissions.IsAuthenticated',
+            'api.permissions.CustomPermission'
+        ],
+
+    #pagination
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': int(os.getenv("PAGE_SIZE", '10')),  # Number of items per page
+
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
@@ -146,11 +156,32 @@ SIMPLE_JWT = {
 }
 
 
+CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'khyati.humbingo@gmail.com'
-EMAIL_HOST_PASSWORD = 'sefh jpki fucj xkxu'
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'khyati.humbingo@gmail.com'
+# EMAIL_HOST_PASSWORD = 'sefh jpki fucj xkxu'
