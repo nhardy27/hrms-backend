@@ -1,5 +1,3 @@
-# api/ForgetPassword/view.py
-
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -22,7 +20,6 @@ class PasswordResetRequestView(APIView):
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             reset_link = f"{settings.BASE_URL}/api/v1/passwordResetConfirm/{uid}/{token}/"
-
 
             # Store the reset link in a variable
             click_this_link = reset_link
