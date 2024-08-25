@@ -179,9 +179,13 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'khyati.humbingo@gmail.com'
-# EMAIL_HOST_PASSWORD = 'sefh jpki fucj xkxu'
+
+
+#-----------------------------------------------------------------------------------
+#change email and application password - email will send from this email id
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'khyati.humbingo@gmail.com'
+EMAIL_HOST_PASSWORD = 'zewq ilny lhdy ygcm'

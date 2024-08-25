@@ -27,3 +27,5 @@ DATABASES = {
         'PORT':PORT,
     }
 }
+
+BASE_URL = os.getenv("BASE_URL")

@@ -29,3 +29,5 @@ DATABASES = {
          'PASSWORD': PASS
      }
 }
+
+BASE_URL = os.getenv("BASE_URL")

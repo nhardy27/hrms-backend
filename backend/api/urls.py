@@ -6,6 +6,8 @@ from api.Role import view as roleView
 from api.User import view as userView
 from api.TestAPI import view as TestView
 from api.Address import view as AddressView
+from api.ChangeMyPassword.view import ChangeMyPasswordView
+from api.ForgetPassword.view import PasswordResetRequestView, PasswordResetConfirmView
 
 
 from rest_framework import routers
@@ -39,4 +41,7 @@ urlpatterns = [
     path('',include(router.urls)),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('changeMyPassword/', ChangeMyPasswordView.as_view(), name='changeMyPassword'),
+    path('passwordReset/', PasswordResetRequestView.as_view(), name='passwordResetRequest'),
+    path('passwordResetConfirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='passwordResetConfirm'),
 ]
