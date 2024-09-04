@@ -3,11 +3,11 @@ import os
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
-USER = os.getenv("D_USER")
-HOST = os.getenv("D_HOST")
-PORT = os.getenv("D_PORT")
-DB = os.getenv("D_DB")
-PASS = os.getenv("D_PASS")
+USER = os.getenv("USER")
+HOST = os.getenv("HOST")
+PORT = os.getenv("PORT")
+DB = os.getenv("DB")
+PASS = os.getenv("PASS")
 
 DEBUG = True
 ALLOWED_HOSTS = ["https://placeholder-dev.humbingo.in"]

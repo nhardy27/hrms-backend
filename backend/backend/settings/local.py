@@ -3,11 +3,11 @@ import os
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
-USER = os.getenv("L_USER")
-HOST = os.getenv("L_HOST")
-PORT = os.getenv("L_PORT")
-DB = os.getenv("L_DB")
-PASS = os.getenv("L_PASS")
+USER = os.getenv("USER")
+HOST = os.getenv("HOST")
+PORT = os.getenv("PORT")
+DB = os.getenv("DB")
+PASS = os.getenv("PASS")
 
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
