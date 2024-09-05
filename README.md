@@ -24,6 +24,7 @@ django-placehoder includes
 - static files
 - changeMyPassword
 - forget password (some changes must requires, 1- settings.py change email id and application password. from that mail link will be sent. 2- view.py change server link http://127.0.0.1:8001/)
+- checkUserUser
 
 
 

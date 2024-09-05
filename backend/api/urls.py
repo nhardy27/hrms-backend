@@ -8,6 +8,7 @@ from api.TestAPI import view as TestView
 from api.Address import view as AddressView
 from api.ChangeMyPassword.view import ChangeMyPasswordView
 from api.ForgetPassword.view import PasswordResetRequestView, PasswordResetConfirmView
+from api.IsSuperUser.view import CheckUserType
 
 
 from rest_framework import routers
@@ -44,4 +45,5 @@ urlpatterns = [
     path('changeMyPassword/', ChangeMyPasswordView.as_view(), name='changeMyPassword'),
     path('passwordReset/', PasswordResetRequestView.as_view(), name='passwordResetRequest'),
     # path('pass-reset/<str:temp_token>/', PasswordResetConfirmView.as_view(), name='pass-reset'),  #have put this in main urls.py due to do not want api/v1/ in path
+    path('isSuperUser/', CheckUserType.as_view(), name='isSuperUser'),
 ]
