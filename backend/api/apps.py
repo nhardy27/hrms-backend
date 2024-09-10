@@ -6,6 +6,7 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
+        import api.UserProfile
         import api.TestAPI.model
         import api.Address.model
         
