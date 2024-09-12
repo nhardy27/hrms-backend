@@ -27,6 +27,7 @@ django-placehoder includes
 - checkUserUser
 - userProfile with contact_no field which is associated with user model
 - createUser without authentication
+- websocket - django channels (base.py, asgi.py, api/websocket (routings.py works like urls.py and consumers.py works like views.py))
 
 
 seed_files

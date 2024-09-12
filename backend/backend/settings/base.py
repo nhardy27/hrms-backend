@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
@@ -21,10 +22,11 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'drf_yasg',
+    'channels',
     'django_seed',
     'api',
     'security',
-
+    
 ]
 
 MIDDLEWARE = [
@@ -71,7 +73,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+# WSGI_APPLICATION = 'backend.wsgi.application'
+ASGI_APPLICATION = 'backend.asgi.application' # asgi for websocket and channels
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 
 
 
