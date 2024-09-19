@@ -20,8 +20,8 @@ class PasswordResetRequestView(APIView):
     def post(self, request):
         email = request.data.get('email')
         user = User.objects.filter(email=email).first()
-        if user:
 
+        if user:
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
@@ -29,7 +29,7 @@ class PasswordResetRequestView(APIView):
             temp_token = str(uuid.uuid4())
             cache.set(temp_token, {'uid': uid, 'token': token}, timeout=3600)  # Expires in 1 hour
 
-            reset_link = f"{settings.BASE_URL}/pass-reset/{temp_token}/"
+            reset_link = f"{settings.BASE_URL}/auth/pass-reset/{temp_token}/"
 
             subject = "Password Reset Request"
             message = (
@@ -39,16 +39,19 @@ class PasswordResetRequestView(APIView):
                 "If you did not request this, please ignore this email.<br><br>"
                 "Thank you."
             )
-            email = EmailMessage(subject, message, to=[user.email])
-            email.content_subtype = "html"
-            email.send()
+            email_message = EmailMessage(subject, message, to=[user.email])
+            email_message.content_subtype = "html"
+            email_message.send()
 
-        return Response(
-            {"detail": "If an account with this email exists, a password reset link has been sent."},
-            status=status.HTTP_200_OK
-        )
-
-
+            return Response(
+                {"detail": "A password reset link has been sent successfully."},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"detail": "No account found with this email address."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 class PasswordResetConfirmSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True)

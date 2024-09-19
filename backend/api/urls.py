@@ -7,10 +7,9 @@ from api.User import view as userView
 from api.TestAPI import view as TestView
 from api.Address import view as AddressView
 from api.ChangeMyPassword.view import ChangeMyPasswordView
-from api.ForgetPassword.view import PasswordResetRequestView, PasswordResetConfirmView
+from api.ForgetPassword.view import PasswordResetRequestView
 from api.IsSuperUser.view import CheckUserType
 from api.CreateUser import views as createUserViews
-
 
 from rest_framework import routers
 from rest_framework import permissions
@@ -23,7 +22,6 @@ router.register(r'role',roleView.RoleViewset, basename='role'),
 router.register(r'permission', permissionView.PermissionViewset, basename='permission'),
 router.register(r'test', TestView.TestViewset, basename='test'),
 router.register(r'address',AddressView.AddressViewset,basename='address'),
-
 
 # Create a schema view for drf-yasg
 schema_view = get_schema_view(
@@ -45,7 +43,7 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('changeMyPassword/', ChangeMyPasswordView.as_view(), name='changeMyPassword'),
     path('passwordReset/', PasswordResetRequestView.as_view(), name='passwordResetRequest'),
-    # path('pass-reset/<str:temp_token>/', PasswordResetConfirmView.as_view(), name='pass-reset'),  #have put this in main urls.py due to do not want api/v1/ in path
+    # path('pass-reset/<str:temp_token>/', PasswordResetConfirmView.as_view(), name='pass-reset'),  # put it in security(auth) app's urls
     path('isSuperUser/', CheckUserType.as_view(), name='isSuperUser'),
     path('createUser/', createUserViews.CreateUserAPI.as_view(), name='create-user'),
 ]

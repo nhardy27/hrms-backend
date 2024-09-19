@@ -16,7 +16,7 @@ import os
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    contact_No = models.BigIntegerField(null=True)
+    contact_no = models.BigIntegerField(null=True)
     # logo = models.ImageField(upload_to=UploadToUserFolder('clientData/%Y/%m/%d/'), null=True, blank=True)
     # digital_signature = models.ImageField(upload_to=UploadToUserFolder('clientData/%Y/%m/%d/'), null=True, blank=True)
 
