@@ -1,0 +1,9 @@
+ENV=local
+SECRET_KEY=django-insecure-w(#k=^4=$@1-baz-a0k&t6t5_2f_i-=a9-=6_jwzr-lzm9_m0r
+BASE_URL=http://127.0.0.1:8000/
+
+USER=khyati
+HOST=localhost
+PORT=5432
+DB=backend_db
+PASS=Welcome@1
