@@ -10,6 +10,8 @@ class ApiConfig(AppConfig):
         import api.Employee.model
         import api.Department.model
         import api.AttendanceStatus.model
+        import api.Attendance.model
+        
         
         
 

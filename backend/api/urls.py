@@ -10,6 +10,8 @@ from api.IsSuperUser.view import CheckUserType
 from api.CreateUser import views as createUserViews
 from api.Employee.view import EmployeeViewSet
 from api.AttendanceStatus.view import AttendanceStatusViewSet
+from api.Attendance.view import AttendanceViewSet
+
 from api.Department.view import DepartmentViewSet
 from rest_framework import routers
 from rest_framework import permissions
@@ -24,7 +26,8 @@ router.register(r'role',roleView.RoleViewset, basename='role')
 router.register(r'permission', permissionView.PermissionViewset, basename='permission')
 router.register(r'employee', EmployeeViewSet, basename='employeeAddress')
 router.register(r'department', DepartmentViewSet, basename='department')
-router.register(r'attendanceStatus', AttendanceStatusViewSet, basename='attendanceStatus')    
+router.register(r'attendanceStatus', AttendanceStatusViewSet, basename='attendanceStatus')   
+router.register(r'attendance', AttendanceViewSet, basename='attendance') 
 
 
 
