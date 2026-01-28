@@ -7,6 +7,10 @@ class ApiConfig(AppConfig):
 
     def ready(self):
         import api.UserProfile
-        import api.TestAPI.model
-        import api.Address.model
+        import api.Employee.model
+        import api.Department.model
+        import api.AttendanceStatus.model
+        
+        
+
         

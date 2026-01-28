@@ -1,3 +1,4 @@
+# backend/api/permissions.py
 from rest_framework.permissions import BasePermission, DjangoModelPermissions
 from django.contrib.auth.models import Group, Permission as AuthPermission
 from django.urls import resolve
