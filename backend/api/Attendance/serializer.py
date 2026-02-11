@@ -4,10 +4,15 @@ from api.UserProfile.model import UserProfile
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
-    # 🔹 Extra readable fields
+
     username = serializers.CharField(source="user.username", read_only=True)
     emp_code = serializers.SerializerMethodField(read_only=True)
-    status_name = serializers.SerializerMethodField(read_only=True)
+
+    status_name = serializers.CharField(
+        source="attendance_status.get_status_display",
+        read_only=True
+    )
+
     total_hours = serializers.DurationField(read_only=True)
 
     class Meta:
@@ -40,11 +45,3 @@ class AttendanceSerializer(serializers.ModelSerializer):
             return obj.user.userprofile.emp_code
         except UserProfile.DoesNotExist:
             return None
-
-    def get_status_name(self, obj):
-        status = obj.attendance_status
-        if getattr(status, "present", False):
-            return "Present"
-        elif getattr(status, "halfday", False):
-            return "Half Day"
-        return "Absent"

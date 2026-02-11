@@ -16,6 +16,7 @@ from api.Attendance.view import AttendanceViewSet
 from api.Leave.view import LeaveViewSet
 from api.YearMaster.view import YearMasterViewSet
 from api.salary.view import SalaryViewSet
+from api.CustomApi.AdminDashboard import AdminDashboardAPIView
 
 
 
@@ -67,5 +68,6 @@ urlpatterns = [
     # path('pass-reset/<str:temp_token>/', PasswordResetConfirmView.as_view(), name='pass-reset'),  # put it in security(auth) app's urls
     path('isSuperUser/', CheckUserType.as_view(), name='isSuperUser'),
     path('createUser/', createUserViews.CreateUserAPI.as_view(), name='create-user'),
+    path('adminDashboard/', AdminDashboardAPIView.as_view(), name='admin-dashboard'),
 
 ]

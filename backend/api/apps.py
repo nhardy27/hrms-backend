@@ -10,6 +10,7 @@ class ApiConfig(AppConfig):
         import api.UserProfile
         import api.Department.model
         import api.AttendanceStatus.model
+        
         import api.Attendance.model
         import api.Leave.model     
         import api.YearMaster.model
