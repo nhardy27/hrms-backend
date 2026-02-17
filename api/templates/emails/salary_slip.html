@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 30px 15px;
+        }
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+        }
+        .month {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+        }
+        td {
+            color: #333;
+        }
+        .label {
+            font-weight: bold;
+            width: 25%;
+        }
+        .value {
+            width: 25%;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .status-row {
+            font-weight: 500;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border: 1px solid #333;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .gross-row td {
+            font-weight: bold;
+            background-color: #f5f5f5;
+        }
+        .net-row {
+            background-color: #333;
+            color: white;
+            font-size: 15px;
+        }
+        .net-row td {
+            color: white;
+            padding: 12px 10px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        .footer p {
+            margin: 3px 0;
+        }
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>SALARY SLIP</h2>
+    <div class="month">
+        {% if salary.month == 1 %}January
+        {% elif salary.month == 2 %}February
+        {% elif salary.month == 3 %}March
+        {% elif salary.month == 4 %}April
+        {% elif salary.month == 5 %}May
+        {% elif salary.month == 6 %}June
+        {% elif salary.month == 7 %}July
+        {% elif salary.month == 8 %}August
+        {% elif salary.month == 9 %}September
+        {% elif salary.month == 10 %}October
+        {% elif salary.month == 11 %}November
+        {% elif salary.month == 12 %}December
+        {% endif %} {{ salary.year.year }}
+    </div>
+
+    <table>
+        <!-- Employee Details -->
+        <tr>
+            <th colspan="4">EMPLOYEE DETAILS</th>
+        </tr>
+        <tr>
+            <td class="label">Employee Name</td>
+            <td class="value">{{ user.first_name }} {{ user.last_name }}</td>
+            <td class="label">Employee Code</td>
+            <td class="value">{{ user.userprofile.emp_code|default:user.username }}</td>
+        </tr>
+        <tr>
+            <td class="label">Mobile Number</td>
+            <td class="value">{{ user.userprofile.contact_no|default:"N/A" }}</td>
+            <td class="label">Email</td>
+            <td class="value">{{ user.email }}</td>
+        </tr>
+        <tr>
+            <td class="label">Designation</td>
+            <td class="value">{{ user.userprofile.designation|default:"N/A" }}</td>
+            <td class="label">Department</td>
+            <td class="value">{{ user.userprofile.department|default:"N/A" }}</td>
+        </tr>
+        <tr class="status-row">
+            <td colspan="4" class="text-center">
+                <strong>Payment Status: </strong>
+                <span class="badge">
+                    {{ salary.payment_status }}
+                </span>
+                {% if salary.payment_date %}
+                <strong style="margin-left: 20px;">Payment Date: </strong>{{ salary.payment_date|date:"d M, Y" }}
+                {% endif %}
+            </td>
+        </tr>
+        
+        <!-- Earnings & Deductions -->
+        <tr>
+            <th colspan="2">EARNINGS</th>
+            <th colspan="2">DEDUCTIONS</th>
+        </tr>
+        <tr>
+            <td class="label">Basic Salary</td>
+            <td class="value text-right">₹{{ salary.basic_salary }}</td>
+            <td class="label">PF ({{ salary.pf_percentage }}%)</td>
+            <td class="value text-right">₹{{ salary.pf_amount }}</td>
+        </tr>
+        <tr>
+            <td class="label">HRA</td>
+            <td class="value text-right">₹{{ salary.hra }}</td>
+            <td class="label">Deduction</td>
+            <td class="value text-right">₹{{ salary.deduction }}</td>
+        </tr>
+        <tr>
+            <td class="label">Allowance</td>
+            <td class="value text-right">₹{{ salary.allowance }}</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="gross-row">
+            <td class="label">Gross Salary</td>
+            <td class="value text-right">₹{{ salary.basic_salary|add:salary.hra|add:salary.allowance }}</td>
+            <td class="label">Total Deduction</td>
+            <td class="value text-right">₹{{ salary.pf_amount|add:salary.deduction }}</td>
+        </tr>
+        
+        <!-- Attendance -->
+        <tr>
+            <th colspan="4">ATTENDANCE</th>
+        </tr>
+        <tr>
+            <td class="label">Working Days</td>
+            <td class="value text-right">{{ salary.total_working_days }}</td>
+            <td class="label">Present Days</td>
+            <td class="value text-right">{{ salary.present_days }}</td>
+        </tr>
+        <tr>
+            <td class="label">Half Days</td>
+            <td class="value text-right">{{ salary.half_days }}</td>
+            <td class="label">Absent Days</td>
+            <td class="value text-right">{{ salary.absent_days }}</td>
+        </tr>
+        
+        <!-- Net Salary -->
+        <tr class="net-row">
+            <td colspan="3">NET SALARY</td>
+            <td class="text-right">₹{{ salary.net_salary }}</td>
+        </tr>
+    </table>
+
+    <div class="footer">
+        <p>This is a computer-generated salary slip.</p>
+        <p>For queries, contact HR department.</p>
+        <p>hr.humbingo@gmail.com</p>
+    </div>
+
+</div>
+</body>
+</html>
