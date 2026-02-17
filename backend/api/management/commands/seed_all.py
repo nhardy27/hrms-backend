@@ -13,7 +13,6 @@ class Command(BaseCommand):
         seed_scripts = [
             'api.management.commands.seed_address',
             'api.management.commands.seed_test',
-            'api.management.commands.seed_employee',
         ]
 
         for script in seed_scripts:
