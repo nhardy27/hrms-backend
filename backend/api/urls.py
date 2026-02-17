@@ -16,7 +16,7 @@ from api.Attendance.view import AttendanceViewSet
 from api.Leave.view import LeaveViewSet
 from api.YearMaster.view import YearMasterViewSet
 from api.salary.view import SalaryViewSet
-from api.CustomApi.AdminDashboard import AdminDashboardAPIView
+from api.CustomAPI.adminDashboard import AdminDashboardAPIView
 
 
 
