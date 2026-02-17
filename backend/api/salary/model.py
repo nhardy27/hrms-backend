@@ -18,6 +18,8 @@ class Salary(models.Model):
     basic_salary = models.DecimalField(max_digits=10, decimal_places=2)
     hra = models.DecimalField(max_digits=10, decimal_places=2)
     allowance = models.DecimalField(max_digits=10, decimal_places=2)
+    pf_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=12.00)
+    pf_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_working_days = models.IntegerField()
     present_days = models.IntegerField()
     absent_days = models.IntegerField()

@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 
 from .model import Attendance
 from .serializer import AttendanceSerializer
@@ -61,3 +62,40 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             {"message": "Attendance deleted successfully"},
             status=status.HTTP_204_NO_CONTENT
         )
+
+    @action(detail=False, methods=['get'], url_path='search')
+    def search_attendance(self, request):
+        emp_code = request.query_params.get('emp_code')
+        year = request.query_params.get('year')
+        month = request.query_params.get('month')
+
+        if not emp_code or not year or not month:
+            return Response(
+                {"error": "emp_code, year, and month are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        month_map = {
+            'january': 1, 'february': 2, 'march': 3, 'april': 4,
+            'may': 5, 'june': 6, 'july': 7, 'august': 8,
+            'september': 9, 'october': 10, 'november': 11, 'december': 12
+        }
+
+        month_num = month_map.get(month.lower())
+        if not month_num:
+            return Response(
+                {"error": "Invalid month name"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        queryset = Attendance.objects.select_related(
+            "user", "attendance_status"
+        ).filter(
+            deleted_at__isnull=True,
+            user__username=emp_code,
+            date__year=year,
+            date__month=month_num
+        )
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

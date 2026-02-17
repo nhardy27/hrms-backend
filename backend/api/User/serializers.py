@@ -15,11 +15,15 @@ class UserSerializer(serializers.ModelSerializer):
     department = serializers.UUIDField(required=False)
     designation = serializers.CharField(max_length=30, required=False)
     date_of_joining = serializers.DateField(required=False)
+    address = serializers.CharField(required=False)
+    bank_name = serializers.CharField(max_length=100, required=False)
+    bank_account_number = serializers.CharField(max_length=30, required=False)
+    ifsc_code = serializers.CharField(max_length=20, required=False)
     department_name = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'groups', 'is_staff', 'is_active', 'contact_no', 'department', 'department_name','designation', 'date_of_joining']
+        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'groups', 'is_staff', 'is_active', 'contact_no', 'department', 'department_name', 'designation', 'date_of_joining', 'address', 'bank_name', 'bank_account_number', 'ifsc_code']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -35,6 +39,10 @@ class UserSerializer(serializers.ModelSerializer):
             representation['department_name'] = self.get_department_name(instance)
             representation['designation'] = profile.designation
             representation['date_of_joining'] = profile.date_of_joining
+            representation['address'] = profile.address
+            representation['bank_name'] = profile.bank_name
+            representation['bank_account_number'] = profile.bank_account_number
+            representation['ifsc_code'] = profile.ifsc_code
         except UserProfile.DoesNotExist:
             representation['emp_code'] = None
             representation['contact_no'] = None
@@ -42,6 +50,10 @@ class UserSerializer(serializers.ModelSerializer):
             representation['department_name'] = None
             representation['designation'] = None
             representation['date_of_joining'] = None
+            representation['address'] = None
+            representation['bank_name'] = None
+            representation['bank_account_number'] = None
+            representation['ifsc_code'] = None
 
         return representation
 
@@ -51,7 +63,11 @@ class UserSerializer(serializers.ModelSerializer):
             'contact_no': validated_data.pop('contact_no', None),
             'department_id': validated_data.pop('department', None),
             'designation': validated_data.pop('designation', None),
-            'date_of_joining': validated_data.pop('date_of_joining', None)
+            'date_of_joining': validated_data.pop('date_of_joining', None),
+            'address': validated_data.pop('address', None),
+            'bank_name': validated_data.pop('bank_name', None),
+            'bank_account_number': validated_data.pop('bank_account_number', None),
+            'ifsc_code': validated_data.pop('ifsc_code', None)
         }
 
         if 'password' in validated_data:
@@ -77,7 +93,11 @@ class UserSerializer(serializers.ModelSerializer):
             'contact_no': validated_data.pop('contact_no', None),
             'department_id': validated_data.pop('department', None),
             'designation': validated_data.pop('designation', None),
-            'date_of_joining': validated_data.pop('date_of_joining', None)
+            'date_of_joining': validated_data.pop('date_of_joining', None),
+            'address': validated_data.pop('address', None),
+            'bank_name': validated_data.pop('bank_name', None),
+            'bank_account_number': validated_data.pop('bank_account_number', None),
+            'ifsc_code': validated_data.pop('ifsc_code', None)
         }
 
         if 'password' in validated_data:
