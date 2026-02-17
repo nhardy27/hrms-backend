@@ -25,13 +25,39 @@ class AttendanceViewSet(viewsets.ModelViewSet):
 
         queryset = Attendance.objects.select_related(
             "user",
-            "attendance_status"
+            "attendance_status",
+            "user__userprofile"
         ).filter(deleted_at__isnull=True)
 
-        if user.is_superuser:
-            return queryset
+        emp_code = self.request.query_params.get("emp_code")
+        year = self.request.query_params.get("year")
+        month = self.request.query_params.get("month")
 
-        return queryset.filter(user=user)
+        # ✅ Filter by emp_code (from UserProfile)
+        if emp_code:
+            queryset = queryset.filter(
+                user__userprofile__emp_code__iexact=emp_code
+            )
+
+        # ✅ Filter by year
+        if year:
+            queryset = queryset.filter(date__year=year)
+
+        # ✅ Filter by month (string like january)
+        if month:
+            import calendar
+            try:
+                month_number = list(calendar.month_name).index(month.capitalize())
+                queryset = queryset.filter(date__month=month_number)
+            except ValueError:
+                pass
+
+        # Restrict for non-superuser
+        if not user.is_superuser:
+            queryset = queryset.filter(user=user)
+
+        return queryset
+
 
     def perform_create(self, serializer):
         """
@@ -62,40 +88,3 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             {"message": "Attendance deleted successfully"},
             status=status.HTTP_204_NO_CONTENT
         )
-
-    @action(detail=False, methods=['get'], url_path='search')
-    def search_attendance(self, request):
-        emp_code = request.query_params.get('emp_code')
-        year = request.query_params.get('year')
-        month = request.query_params.get('month')
-
-        if not emp_code or not year or not month:
-            return Response(
-                {"error": "emp_code, year, and month are required"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        month_map = {
-            'january': 1, 'february': 2, 'march': 3, 'april': 4,
-            'may': 5, 'june': 6, 'july': 7, 'august': 8,
-            'september': 9, 'october': 10, 'november': 11, 'december': 12
-        }
-
-        month_num = month_map.get(month.lower())
-        if not month_num:
-            return Response(
-                {"error": "Invalid month name"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        queryset = Attendance.objects.select_related(
-            "user", "attendance_status"
-        ).filter(
-            deleted_at__isnull=True,
-            user__username=emp_code,
-            date__year=year,
-            date__month=month_num
-        )
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
