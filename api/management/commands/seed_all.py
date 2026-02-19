@@ -11,9 +11,7 @@ class Command(BaseCommand):
 
         # Import and run each seed script
         seed_scripts = [
-            'api.management.commands.seed_address',
-            'api.management.commands.seed_test',
-
+            # Add your HR-related seed scripts here
         ]
 
         for script in seed_scripts:
