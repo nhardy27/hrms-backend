@@ -2,9 +2,9 @@ from rest_framework import serializers
 from api.UserProfile.model import UserProfile
 from django.contrib.auth.models import User
 
-
+# UserProfile serializer with department name display
 class UserProfileSerializer(serializers.ModelSerializer):
-    department_name = serializers.SerializerMethodField(read_only=True)
+    department_name = serializers.SerializerMethodField(read_only=True)  # Display department name
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
 

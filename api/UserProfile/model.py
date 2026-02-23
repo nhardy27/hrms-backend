@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from api.Department.model import Department
 
-
+# Extended user profile with employee details
 class UserProfile(models.Model):
 
     user = models.OneToOneField(
@@ -14,7 +14,7 @@ class UserProfile(models.Model):
     emp_code = models.CharField(
         max_length=10,
         unique=True,
-        editable=False,
+        editable=False,  # Auto-generated
         null=True,
         blank=True
     )
@@ -34,22 +34,26 @@ class UserProfile(models.Model):
     date_of_joining = models.DateField(null=True, blank=True)
     status = models.BooleanField(default=True)
     address = models.TextField(null=True, blank=True)
+    
+    # Bank details
     bank_name = models.CharField(max_length=100, null=True, blank=True)
     bank_account_number = models.CharField(max_length=30, null=True, blank=True)
     ifsc_code = models.CharField(max_length=20, null=True, blank=True)
 
+    # Salary components
     basic_salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     hra = models.DecimalField(max_digits=10, decimal_places=2,  null=True, blank=True)
     allowance = models.DecimalField(max_digits=10, decimal_places=2,  null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)   
     updated_at = models.DateTimeField(auto_now=True)
-    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)  # Soft delete
 
     def __str__(self):
         return f"{self.emp_code} - {self.user.username}"
 
     def save(self, *args, **kwargs):
+        # Auto-generate employee code (EMP0001, EMP0002, etc.)
         if not self.emp_code:
             last_emp = UserProfile.objects.order_by('-created_at').first()
             if last_emp and last_emp.emp_code:

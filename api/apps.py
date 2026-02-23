@@ -7,6 +7,11 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
+        """
+        Import all models when the app is ready.
+        This ensures models are registered with Django.
+        Note: Add new models here when created.
+        """
         import api.UserProfile
         import api.Department.model
         import api.AttendanceStatus.model

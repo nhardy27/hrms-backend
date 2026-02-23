@@ -1,4 +1,5 @@
 # backend/backend/settings/base.py
+# Base settings file for Django HR Management System
 from pathlib import Path
 import os
 from pathlib import Path
@@ -6,27 +7,32 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Secret key loaded from environment variables for security
 SECRET_KEY =os.getenv("SECRET_KEY")
 
 
+# Installed applications
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'daphne',
+    'daphne',  # ASGI server for WebSocket support
     'django.contrib.staticfiles',
-    'corsheaders',
-    'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
-    'django_extensions',
-    'django_filters',
-    'drf_yasg',
-    'channels',
-    'django_seed',
-    'api',
-    'security',
+    # Third-party apps
+    'corsheaders',  # CORS headers for API access
+    'rest_framework',  # Django REST Framework
+    'rest_framework_simplejwt.token_blacklist',  # JWT token blacklist
+    'django_extensions',  # Django extensions
+    'django_filters',  # Filtering support
+    'drf_yasg',  # Swagger/OpenAPI documentation
+    'channels',  # WebSocket support
+    'django_seed',  # Seed data generation
+    # Custom apps
+    'api',  # Main API app
+    'security',  # Authentication and security
     
 ]
 
@@ -75,13 +81,15 @@ TEMPLATES = [
 ]
 
 # WSGI_APPLICATION = 'backend.wsgi.application'
-ASGI_APPLICATION = 'backend.asgi.application' # asgi for websocket and channels
+# ASGI application for WebSocket and Channels support
+ASGI_APPLICATION = 'backend.asgi.application'
 
+# Channel layers configuration for WebSocket using Redis
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('127.0.0.1', 6379)],  # Redis server configuration
         },
     },
 }
@@ -112,28 +120,32 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
+# Django REST Framework configuration
 REST_FRAMEWORK = {        
+    # JWT authentication for API security
     'DEFAULT_AUTHENTICATION_CLASSES': (
             'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
-        
+    # Default permissions: authenticated users with custom role-based permissions    
     'DEFAULT_PERMISSION_CLASSES': [
             'rest_framework.permissions.IsAuthenticated',
-            'api.permissions.CustomPermission'
+            'api.permissions.CustomPermission'  # Custom role-based permission
         ],
 
-    #pagination
+    # Pagination configuration
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': int(os.getenv("PAGE_SIZE", '10')),  # Number of items per page
 
+    # Filter backend for query filtering
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
+# JWT token configuration
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),  # Access token expires in 5 minutes
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Refresh token expires in 1 day
+    "ROTATE_REFRESH_TOKENS": True,  # Generate new refresh token on refresh
+    "BLACKLIST_AFTER_ROTATION": True,  # Blacklist old refresh tokens
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
@@ -170,8 +182,10 @@ SIMPLE_JWT = {
 }
 
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS configuration for cross-origin requests
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (configure for production)
 
+# Allowed HTTP methods for CORS
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -196,12 +210,12 @@ CORS_ALLOW_HEADERS = [
 
 
 #-----------------------------------------------------------------------------------
-
+# Email configuration for password reset and offer letters
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 # EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL") == "False"
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")  # Sender email address
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")  # App password for email

@@ -11,21 +11,32 @@ from api.permissions import CustomPermission
 from datetime import datetime
 
 class UserViewset(ModelViewSet):
+    """
+    ViewSet for User management.
+    Provides CRUD operations and custom actions like sending offer letters.
+    """
     serializer_class = UserSerializer
     permission_classes = [CustomPermission]
 
     def get_queryset(self):
+        """
+        Filter queryset based on user role:
+        - Superuser: can see all users
+        - Normal user: can only see their own data
+        """
         user = self.request.user
 
-        # agar superuser hai → sab users dikhao
         if user.is_superuser:
             return User.objects.all()
 
-        # warna sirf logged-in user ka data
         return User.objects.filter(id=user.id)
 
     @action(detail=True, methods=['post'])
     def send_offer_letter(self, request, pk=None):
+        """
+        Custom action to send offer letter email to a user.
+        Endpoint: POST /api/v1/user/{id}/send_offer_letter/
+        """
         try:
             user = User.objects.get(id=pk)
         except User.DoesNotExist:
@@ -49,6 +60,7 @@ class UserViewset(ModelViewSet):
             except:
                 pass
         
+        # Prepare email context
         context = {
             'candidate_name': f"{user.first_name} {user.last_name}",
             'candidate_email': user.email,
@@ -63,6 +75,7 @@ class UserViewset(ModelViewSet):
         }
 
         try:
+            # Render HTML template and send email
             html_content = render_to_string('emails/offer_letter.html', context)
             email = EmailMultiAlternatives(
                 subject="Offer Letter",

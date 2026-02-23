@@ -2,11 +2,20 @@
 """Django's command-line utility for administrative tasks."""
 import os
 from dotenv import load_dotenv
+# Load environment variables from .env file
 load_dotenv(override=True)
 import sys
 
 
 def main():
+    """
+    Main function to run Django management commands.
+    Automatically selects settings file based on ENV variable:
+    - local: for local development
+    - development: for dev server
+    - stage: for staging environment
+    - production: for production server
+    """
     ENV = os.getenv("ENV")
     if ENV == "local":
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings.local')

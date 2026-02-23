@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 
-
+# Year master for salary and attendance tracking
 class YearMaster(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     year = models.PositiveIntegerField(unique=True)

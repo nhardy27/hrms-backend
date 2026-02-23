@@ -1,7 +1,7 @@
 from django.db import models
 import uuid
 
-
+# Attendance status lookup (present, absent, halfday)
 class AttendanceStatus(models.Model):
 
     STATUS_CHOICES = [

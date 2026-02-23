@@ -2,11 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
-
+# Leave management model
 class Leave(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    # FK to User
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -18,7 +17,7 @@ class Leave(models.Model):
 
     reason = models.TextField(null=True, blank=True)
 
-    # Leave status
+    # Leave approval status
     STATUS_CHOICES = (
         ("PENDING", "Pending"),
         ("APPROVED", "Approved"),
@@ -32,7 +31,7 @@ class Leave(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)  # Soft delete
 
     def __str__(self):
         return f"{self.user.username} | {self.from_date} → {self.to_date}"

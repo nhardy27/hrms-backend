@@ -5,12 +5,14 @@ from api.UserProfile.model import UserProfile
 from api.Department.model import Department
 from api.Attendance.model import Attendance
 
+# User serializer with embedded UserProfile fields
 class UserSerializer(serializers.ModelSerializer):
     groups = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Group.objects.all(),
         required=False
     )
+    # UserProfile fields exposed at User level
     contact_no = serializers.CharField(max_length=15, required=False)
     department = serializers.UUIDField(required=False)
     designation = serializers.CharField(max_length=30, required=False)
@@ -22,7 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
     basic_salary = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     hra = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     allowance = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
-    department_name = serializers.SerializerMethodField()
+    department_name = serializers.SerializerMethodField()  # Read-only department name
     
     class Meta:
         model = User
@@ -32,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def to_representation(self, instance):
+        # Include UserProfile fields in response
         representation = super().to_representation(instance)
         
         try:
@@ -67,6 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
         return representation
 
     def create(self, validated_data):
+        # Extract profile data and create User with UserProfile
         groups_data = validated_data.pop('groups', [])
         profile_data = {
             'contact_no': validated_data.pop('contact_no', None),
@@ -89,7 +93,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.groups.set(groups_data)
         self._update_user_permissions(user)
 
-        # Create UserProfile with employee data
+        # Create UserProfile
         UserProfile.objects.create(
             user=user,
             first_name=user.first_name,
@@ -100,6 +104,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
+        # Update User and UserProfile
         groups_data = validated_data.pop('groups', [])
         profile_data = {
             'contact_no': validated_data.pop('contact_no', None),
@@ -136,12 +141,14 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
     def _update_user_permissions(self, user):
+        # Sync user permissions from groups
         permissions = set()
         for group in user.groups.all():
             permissions.update(group.permissions.all())
         user.user_permissions.set(permissions)
 
     def get_department_name(self, obj):
+        # Get department name for display
         try:
             profile = obj.userprofile
             if profile.department_id:
