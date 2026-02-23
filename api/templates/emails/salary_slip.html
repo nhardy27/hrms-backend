@@ -175,25 +175,25 @@
         </tr>
         <tr>
             <td class="label">Basic Salary</td>
-            <td class="value text-right">₹{{ salary.basic_salary }}</td>
+            <td class="value text-right">₹{{ user.userprofile.basic_salary|default:0 }}</td>
             <td class="label">PF ({{ salary.pf_percentage }}%)</td>
             <td class="value text-right">₹{{ salary.pf_amount }}</td>
         </tr>
         <tr>
             <td class="label">HRA</td>
-            <td class="value text-right">₹{{ salary.hra }}</td>
-            <td class="label">Deduction</td>
+            <td class="value text-right">₹{{ user.userprofile.hra|default:0 }}</td>
+            <td class="label">Other Deduction</td>
             <td class="value text-right">₹{{ salary.deduction }}</td>
         </tr>
         <tr>
             <td class="label">Allowance</td>
-            <td class="value text-right">₹{{ salary.allowance }}</td>
+            <td class="value text-right">₹{{ user.userprofile.allowance|default:0 }}</td>
             <td></td>
             <td></td>
         </tr>
         <tr class="gross-row">
             <td class="label">Gross Salary</td>
-            <td class="value text-right">₹{{ salary.basic_salary|add:salary.hra|add:salary.allowance }}</td>
+            <td class="value text-right">₹{{ user.userprofile.basic_salary|add:user.userprofile.hra|add:user.userprofile.allowance }}</td>
             <td class="label">Total Deduction</td>
             <td class="value text-right">₹{{ salary.pf_amount|add:salary.deduction }}</td>
         </tr>
