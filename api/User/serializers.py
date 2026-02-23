@@ -19,11 +19,14 @@ class UserSerializer(serializers.ModelSerializer):
     bank_name = serializers.CharField(max_length=100, required=False)
     bank_account_number = serializers.CharField(max_length=30, required=False)
     ifsc_code = serializers.CharField(max_length=20, required=False)
+    basic_salary = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    hra = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    allowance = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     department_name = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'groups', 'is_staff', 'is_active', 'contact_no', 'department', 'department_name', 'designation', 'date_of_joining', 'address', 'bank_name', 'bank_account_number', 'ifsc_code']
+        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'groups', 'is_staff', 'is_active', 'contact_no', 'department', 'department_name', 'designation', 'date_of_joining', 'address', 'bank_name', 'bank_account_number', 'ifsc_code', 'basic_salary', 'hra', 'allowance']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -43,6 +46,9 @@ class UserSerializer(serializers.ModelSerializer):
             representation['bank_name'] = profile.bank_name
             representation['bank_account_number'] = profile.bank_account_number
             representation['ifsc_code'] = profile.ifsc_code
+            representation['basic_salary'] = profile.basic_salary
+            representation['hra'] = profile.hra
+            representation['allowance'] = profile.allowance
         except UserProfile.DoesNotExist:
             representation['emp_code'] = None
             representation['contact_no'] = None
@@ -54,6 +60,9 @@ class UserSerializer(serializers.ModelSerializer):
             representation['bank_name'] = None
             representation['bank_account_number'] = None
             representation['ifsc_code'] = None
+            representation['basic_salary'] = None
+            representation['hra'] = None
+            representation['allowance'] = None
 
         return representation
 
@@ -67,7 +76,10 @@ class UserSerializer(serializers.ModelSerializer):
             'address': validated_data.pop('address', None),
             'bank_name': validated_data.pop('bank_name', None),
             'bank_account_number': validated_data.pop('bank_account_number', None),
-            'ifsc_code': validated_data.pop('ifsc_code', None)
+            'ifsc_code': validated_data.pop('ifsc_code', None),
+            'basic_salary': validated_data.pop('basic_salary', None),
+            'hra': validated_data.pop('hra', None),
+            'allowance': validated_data.pop('allowance', None)
         }
 
         if 'password' in validated_data:
@@ -97,7 +109,10 @@ class UserSerializer(serializers.ModelSerializer):
             'address': validated_data.pop('address', None),
             'bank_name': validated_data.pop('bank_name', None),
             'bank_account_number': validated_data.pop('bank_account_number', None),
-            'ifsc_code': validated_data.pop('ifsc_code', None)
+            'ifsc_code': validated_data.pop('ifsc_code', None),
+            'basic_salary': validated_data.pop('basic_salary', None),
+            'hra': validated_data.pop('hra', None),
+            'allowance': validated_data.pop('allowance', None)
         }
 
         if 'password' in validated_data:

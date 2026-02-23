@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 40px; background: #fff; }
+        .container { max-width: 700px; margin: 0 auto; border: 1px solid #ddd; padding: 40px; }
+        .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #333; }
+        .header h1 { font-size: 24px; color: #333; }
+        .company { margin-bottom: 30px; }
+        .company h2 { font-size: 16px; color: #333; margin-bottom: 5px; }
+        .company p { font-size: 11px; color: #666; }
+        .date { text-align: right; font-size: 12px; color: #666; margin-bottom: 30px; }
+        .to { margin-bottom: 30px; }
+        .to p { font-size: 13px; color: #333; line-height: 1.6; }
+        .content { font-size: 13px; color: #333; line-height: 1.8; }
+        .content p { margin-bottom: 15px; }
+        .signature { margin-top: 40px; }
+        .signature p { font-size: 13px; color: #333; line-height: 1.6; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; font-size: 11px; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JOB OFFER LETTER</h1>
+        </div>
+
+        <div class="company">
+            <h2>Humbingo Technologies Pvt. Ltd.</h2>
+            <p>📧 hr@humbingo.com | 📞 +91 81285 14266 | 🌐 www.humbingo.com</p>
+        </div>
+
+        <div class="date">{{ offer_date }}</div>
+
+        <div class="to">
+            <p><strong>To:</strong><br>
+            {{ candidate_name }}<br>
+            {{ candidate_email }}<br>
+            {{ candidate_contact }}</p>
+        </div>
+
+        <div class="content">
+            <p>Dear {{ candidate_name }},</p>
+            
+            <p>We are pleased to offer you the position of <strong>{{ designation }}</strong> at <strong>Humbingo Technologies Pvt. Ltd.</strong>, starting on <strong>{{ joining_date }}</strong>. In this role, you will report to the <strong>{{ department }}</strong> department.</p>
+
+            <p>Your monthly salary will be <strong>INR {{ basic_salary|add:hra|add:allowance }}</strong> (Basic: ₹{{ basic_salary }}, HRA: ₹{{ hra }}, Allowance: ₹{{ allowance }}), along with benefits including health insurance, paid leave, internet allowance, and performance bonuses. Full details will be shared upon confirmation.</p>
+
+            <p>We look forward to having you onboard and seeing your contributions to our team.</p>
+        </div>
+
+        <div class="signature">
+            <p>Warm Regards,</p>
+            <p style="margin-top: 40px;"><strong>HR Manager</strong><br>Humbingo Technologies Pvt. Ltd.</p>
+        </div>
+
+        <div class="footer">
+            <p>This is a system-generated document.</p>
+        </div>
+    </div>
+</body>
+</html>
