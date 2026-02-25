@@ -1,233 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 30px 15px;
-        }
-        .container {
-            max-width: 750px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 5px;
-            font-size: 24px;
-            color: #333;
-            font-weight: bold;
-        }
-        .month {
-            text-align: center;
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #333;
-            font-weight: bold;
-        }
-        td {
-            color: #333;
-        }
-        .label {
-            font-weight: bold;
-            width: 25%;
-        }
-        .value {
-            width: 25%;
-        }
-        .text-right {
-            text-align: right;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .status-row {
-            font-weight: 500;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border: 1px solid #333;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .gross-row td {
-            font-weight: bold;
-            background-color: #f5f5f5;
-        }
-        .net-row {
-            background-color: #333;
-            color: white;
-            font-size: 15px;
-        }
-        .net-row td {
-            color: white;
-            padding: 12px 10px;
-            font-weight: bold;
-        }
-        .footer {
-            text-align: center;
-            font-size: 11px;
-            color: #666;
-            margin-top: 20px;
-            line-height: 1.6;
-        }
-        .footer p {
-            margin: 3px 0;
-        }
-        @media print {
-            body {
-                background-color: white;
-                padding: 0;
-            }
-            .container {
-                box-shadow: none;
-                max-width: 100%;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Salary Slip</title>
+<style>
+body{font-family:Arial,sans-serif;background:#eef2f7;padding:20px;margin:0}
+.container{max-width:850px;margin:auto;background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+h2{text-align:center;margin:0 0 5px;letter-spacing:1px;font-size:22px}
+.month{text-align:center;color:#777;margin-bottom:20px;font-size:14px}
+.section-title{font-weight:bold;margin:20px 0 10px;color:#1f3c5a;font-size:15px}
+.hr-line{border-top:1px solid #ddd;margin:15px 0}
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table td{padding:10px 8px;border:1px solid #e3e3e3}
+.label{font-weight:bold;width:28%;background:#fafafa}
+.text-right{text-align:right}
+.badge-paid{background:#28a745;color:#fff;padding:5px 12px;border-radius:4px;font-size:12px;display:inline-block}
+.badge-unpaid{background:#ffc107;color:#000;padding:5px 12px;border-radius:4px;font-size:12px;display:inline-block}
+.gross-row{font-weight:bold;background:#f7f7f7}
+.net-row{background:#1f3c5a;color:#fff;font-weight:bold;font-size:15px}
+.calculation-box{background:#f5f7fa;padding:15px;border-radius:6px;font-size:13px;margin-top:10px;border:1px solid #e3e3e3}
+.footer{text-align:center;font-size:12px;color:#777;margin-top:20px}
+.footer p{margin:3px 0}
+</style>
 </head>
 <body>
-
 <div class="container">
-
-    <h2>SALARY SLIP</h2>
-    <div class="month">
-        {% if salary.month == 1 %}January
-        {% elif salary.month == 2 %}February
-        {% elif salary.month == 3 %}March
-        {% elif salary.month == 4 %}April
-        {% elif salary.month == 5 %}May
-        {% elif salary.month == 6 %}June
-        {% elif salary.month == 7 %}July
-        {% elif salary.month == 8 %}August
-        {% elif salary.month == 9 %}September
-        {% elif salary.month == 10 %}October
-        {% elif salary.month == 11 %}November
-        {% elif salary.month == 12 %}December
-        {% endif %} {{ salary.year.year }}
-    </div>
-
-    <table>
-        <!-- Employee Details -->
-        <tr>
-            <th colspan="4">EMPLOYEE DETAILS</th>
-        </tr>
-        <tr>
-            <td class="label">Employee Name</td>
-            <td class="value">{{ user.first_name }} {{ user.last_name }}</td>
-            <td class="label">Employee Code</td>
-            <td class="value">{{ user.userprofile.emp_code|default:user.username }}</td>
-        </tr>
-        <tr>
-            <td class="label">Mobile Number</td>
-            <td class="value">{{ user.userprofile.contact_no|default:"N/A" }}</td>
-            <td class="label">Email</td>
-            <td class="value">{{ user.email }}</td>
-        </tr>
-        <tr>
-            <td class="label">Designation</td>
-            <td class="value">{{ user.userprofile.designation|default:"N/A" }}</td>
-            <td class="label">Department</td>
-            <td class="value">{{ user.userprofile.department|default:"N/A" }}</td>
-        </tr>
-        <tr class="status-row">
-            <td colspan="4" class="text-center">
-                <strong>Payment Status: </strong>
-                <span class="badge">
-                    {{ salary.payment_status }}
-                </span>
-                {% if salary.payment_date %}
-                <strong style="margin-left: 20px;">Payment Date: </strong>{{ salary.payment_date|date:"d M, Y" }}
-                {% endif %}
-            </td>
-        </tr>
-        
-        <!-- Earnings & Deductions -->
-        <tr>
-            <th colspan="2">EARNINGS</th>
-            <th colspan="2">DEDUCTIONS</th>
-        </tr>
-        <tr>
-            <td class="label">Basic Salary</td>
-            <td class="value text-right">₹{{ user.userprofile.basic_salary|default:0 }}</td>
-            <td class="label">PF ({{ salary.pf_percentage }}%)</td>
-            <td class="value text-right">₹{{ salary.pf_amount }}</td>
-        </tr>
-        <tr>
-            <td class="label">HRA</td>
-            <td class="value text-right">₹{{ user.userprofile.hra|default:0 }}</td>
-            <td class="label">Other Deduction</td>
-            <td class="value text-right">₹{{ salary.deduction }}</td>
-        </tr>
-        <tr>
-            <td class="label">Allowance</td>
-            <td class="value text-right">₹{{ user.userprofile.allowance|default:0 }}</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr class="gross-row">
-            <td class="label">Gross Salary</td>
-            <td class="value text-right">₹{{ user.userprofile.basic_salary|add:user.userprofile.hra|add:user.userprofile.allowance }}</td>
-            <td class="label">Total Deduction</td>
-            <td class="value text-right">₹{{ salary.pf_amount|add:salary.deduction }}</td>
-        </tr>
-        
-        <!-- Attendance -->
-        <tr>
-            <th colspan="4">ATTENDANCE</th>
-        </tr>
-        <tr>
-            <td class="label">Working Days</td>
-            <td class="value text-right">{{ salary.total_working_days }}</td>
-            <td class="label">Present Days</td>
-            <td class="value text-right">{{ salary.present_days }}</td>
-        </tr>
-        <tr>
-            <td class="label">Half Days</td>
-            <td class="value text-right">{{ salary.half_days }}</td>
-            <td class="label">Absent Days</td>
-            <td class="value text-right">{{ salary.absent_days }}</td>
-        </tr>
-        
-        <!-- Net Salary -->
-        <tr class="net-row">
-            <td colspan="3">NET SALARY</td>
-            <td class="text-right">₹{{ salary.net_salary }}</td>
-        </tr>
-    </table>
-
-    <div class="footer">
-        <p>This is a computer-generated salary slip.</p>
-        <p>For queries, contact HR department.</p>
-        <p>hr.humbingo@gmail.com</p>
-    </div>
-
+<h2>SALARY SLIP</h2>
+<div class="month">For the month of {{ salary.month }} {{ salary.year.year }}</div>
+<div class="hr-line"></div>
+<table class="table">
+<tr>
+<td class="label">Employee Name:</td>
+<td>{{ user.first_name }} {{ user.last_name }}</td>
+<td class="label">Email:</td>
+<td>{{ user.email }}</td>
+</tr>
+<tr>
+<td class="label">Employee Code:</td>
+<td>{{ user.userprofile.emp_code|default:user.username }}</td>
+<td class="label">Designation:</td>
+<td>{{ user.userprofile.designation|default:"N/A" }}</td>
+</tr>
+<tr>
+<td class="label">Mobile Number:</td>
+<td>{{ user.userprofile.contact_no|default:"N/A" }}</td>
+<td class="label">Department:</td>
+<td>{{ user.userprofile.department|default:"N/A" }}</td>
+</tr>
+</table>
+<div style="text-align:center;margin-top:15px"><strong>Payment Status:</strong> {% if salary.payment_status == "paid" %}<span class="badge-paid">PAID</span>{% else %}<span class="badge-unpaid">UNPAID</span>{% endif %}</div>
+<div class="hr-line"></div>
+<table class="table">
+<tr>
+<td colspan="2"><strong>EARNINGS</strong></td>
+<td colspan="2"><strong>DEDUCTIONS</strong></td>
+</tr>
+<tr>
+<td class="label">Basic Salary</td>
+<td class="text-right">₹ {{ user.userprofile.basic_salary|floatformat:2 }}</td>
+<td class="label">Unpaid Leave Deduction</td>
+<td class="text-right">₹ {{ salary.loss_of_pay|floatformat:2 }}</td>
+</tr>
+<tr>
+<td class="label">HRA</td>
+<td class="text-right">₹ {{ user.userprofile.hra|floatformat:2 }}</td>
+<td class="label">PF ({{ salary.pf_percentage }}%)</td>
+<td class="text-right">₹ {{ salary.pf_amount|floatformat:2 }}</td>
+</tr>
+<tr>
+<td class="label">Allowance</td>
+<td class="text-right">₹ {{ user.userprofile.allowance|floatformat:2 }}</td>
+<td class="label"><strong>Total Deduction</strong></td>
+<td class="text-right"><strong>₹ {{ salary.deduction|floatformat:2 }}</strong></td>
+</tr>
+<tr class="gross-row">
+<td class="label">Gross Salary</td>
+<td class="text-right">₹ {{ salary.gross_salary|floatformat:2 }}</td>
+<td class="label">Earned Salary</td>
+<td class="text-right">₹ {{ salary.earned_salary|floatformat:2 }}</td>
+</tr>
+</table>
+<div class="section-title">ATTENDANCE</div>
+<table class="table">
+<tr>
+<td class="label">Working Days</td>
+<td class="text-right">{{ salary.total_working_days }}</td>
+<td class="label">Present Days</td>
+<td class="text-right">{{ salary.present_days }}</td>
+</tr>
+<tr>
+<td class="label">Half Days</td>
+<td class="text-right">{{ salary.half_days }}</td>
+<td class="label">Absent Days</td>
+<td class="text-right">{{ salary.absent_days }}</td>
+</tr>
+</table>
+<div class="section-title">SALARY CALCULATION</div>
+<div class="calculation-box">Net Salary: Earned Salary (₹{{ salary.earned_salary|floatformat:2 }}) - PF (₹{{ salary.pf_amount|floatformat:2 }}) = ₹{{ salary.net_salary|floatformat:2 }}</div>
+<div class="hr-line"></div>
+<table class="table">
+<tr class="net-row">
+<td colspan="3">NET SALARY</td>
+<td class="text-right">₹ {{ salary.net_salary|floatformat:2 }}</td>
+</tr>
+</table>
+<div class="footer"><p>This is a computer-generated salary slip.</p><p>For queries, contact HR department.</p><p>hr.humbingo@gmail.com</p></div>
 </div>
 </body>
 </html>
