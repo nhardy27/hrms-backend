@@ -26,7 +26,7 @@ h2{text-align:center;margin:0 0 5px;letter-spacing:1px;font-size:22px}
 <body>
 <div class="container">
 <h2>SALARY SLIP</h2>
-<div class="month">For the month of {{ salary.month }} {{ salary.year.year }}</div>
+<div class="month">For the month of {{ salary.month }}/{{ salary.year.year }}</div>
 <div class="hr-line"></div>
 <table class="table">
 <tr>
@@ -59,7 +59,7 @@ h2{text-align:center;margin:0 0 5px;letter-spacing:1px;font-size:22px}
 <td class="label">Basic Salary</td>
 <td class="text-right">₹ {{ user.userprofile.basic_salary|floatformat:2 }}</td>
 <td class="label">Unpaid Leave Deduction</td>
-<td class="text-right">₹ {{ salary.loss_of_pay|floatformat:2 }}</td>
+<td class="text-right">₹ {{ salary.loss_of_pay|default:0|floatformat:2 }}</td>
 </tr>
 <tr>
 <td class="label">HRA</td>
