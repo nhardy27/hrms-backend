@@ -5,6 +5,7 @@ from .model import Leave
 class LeaveSerializer(serializers.ModelSerializer):
     # readable fields
     username = serializers.CharField(source="user.username", read_only=True)
+    total_leave = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Leave
@@ -14,6 +15,7 @@ class LeaveSerializer(serializers.ModelSerializer):
             "username",
             "from_date",
             "to_date",
+            "total_leave",
             "reason",
             "status",
             "created_at",

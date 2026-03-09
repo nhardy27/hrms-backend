@@ -33,5 +33,11 @@ class Leave(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)  # Soft delete
 
+    @property
+    def total_leave(self):
+        if self.from_date and self.to_date:
+            return (self.to_date - self.from_date).days + 1
+        return 0
+
     def __str__(self):
         return f"{self.user.username} | {self.from_date} → {self.to_date}"
