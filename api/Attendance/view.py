@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,7 +11,24 @@ from .serializer import AttendanceSerializer
 from api.AttendanceStatus.model import AttendanceStatus
 
 
+class AttendancePagination(PageNumberPagination):
+    page_size = 25
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'total_pages': self.page.paginator.num_pages,
+            'current_page': self.page.number,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data
+        })
+
+
 class AttendanceViewSet(viewsets.ModelViewSet):
+    pagination_class = AttendancePagination
     """
     ViewSet for Attendance management.
     Provides CRUD operations with filtering, searching, and ordering.

@@ -50,7 +50,7 @@ router.register(r'salary', SalaryViewSet, basename='salary')
 # Swagger/OpenAPI schema configuration for API documentation
 schema_view = get_schema_view(
     openapi.Info(
-        title="Placeholder API",
+        title="Hardy API",
         default_version='v1',
         description="Your API Description",
         terms_of_service="https://www.example.com/policies/terms/",
