@@ -15,7 +15,8 @@ class UserSerializer(serializers.ModelSerializer):
     # UserProfile fields exposed at User level
     contact_no = serializers.CharField(max_length=15, required=False)
     department = serializers.UUIDField(required=False)
-    designation = serializers.CharField(max_length=30, required=False)
+    designation = serializers.UUIDField(required=False)
+    designation_name = serializers.SerializerMethodField()
     date_of_joining = serializers.DateField(required=False)
     address = serializers.CharField(required=False)
     bank_name = serializers.CharField(max_length=100, required=False)
@@ -28,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'groups', 'is_staff', 'is_active', 'contact_no', 'department', 'department_name', 'designation', 'date_of_joining', 'address', 'bank_name', 'bank_account_number', 'ifsc_code', 'basic_salary', 'hra', 'allowance']
+        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'groups', 'is_staff', 'is_active', 'contact_no', 'department', 'department_name', 'designation', 'designation_name', 'date_of_joining', 'address', 'bank_name', 'bank_account_number', 'ifsc_code', 'basic_salary', 'hra', 'allowance']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -43,7 +44,8 @@ class UserSerializer(serializers.ModelSerializer):
             representation['contact_no'] = profile.contact_no
             representation['department'] = str(profile.department_id) if profile.department_id else None
             representation['department_name'] = self.get_department_name(instance)
-            representation['designation'] = profile.designation
+            representation['designation'] = str(profile.designation_id) if profile.designation_id else None
+            representation['designation_name'] = profile.designation.name if profile.designation else None
             representation['date_of_joining'] = profile.date_of_joining
             representation['address'] = profile.address
             representation['bank_name'] = profile.bank_name
@@ -58,6 +60,7 @@ class UserSerializer(serializers.ModelSerializer):
             representation['department'] = None
             representation['department_name'] = None
             representation['designation'] = None
+            representation['designation_name'] = None
             representation['date_of_joining'] = None
             representation['address'] = None
             representation['bank_name'] = None
@@ -75,7 +78,7 @@ class UserSerializer(serializers.ModelSerializer):
         profile_data = {
             'contact_no': validated_data.pop('contact_no', None),
             'department_id': validated_data.pop('department', None),
-            'designation': validated_data.pop('designation', None),
+            'designation_id': validated_data.pop('designation', None),
             'date_of_joining': validated_data.pop('date_of_joining', None),
             'address': validated_data.pop('address', None),
             'bank_name': validated_data.pop('bank_name', None),
@@ -109,7 +112,7 @@ class UserSerializer(serializers.ModelSerializer):
         profile_data = {
             'contact_no': validated_data.pop('contact_no', None),
             'department_id': validated_data.pop('department', None),
-            'designation': validated_data.pop('designation', None),
+            'designation_id': validated_data.pop('designation', None),
             'date_of_joining': validated_data.pop('date_of_joining', None),
             'address': validated_data.pop('address', None),
             'bank_name': validated_data.pop('bank_name', None),
@@ -146,6 +149,13 @@ class UserSerializer(serializers.ModelSerializer):
         for group in user.groups.all():
             permissions.update(group.permissions.all())
         user.user_permissions.set(permissions)
+
+    def get_designation_name(self, obj):
+        try:
+            profile = obj.userprofile
+            return profile.designation.name if profile.designation else None
+        except UserProfile.DoesNotExist:
+            return None
 
     def get_department_name(self, obj):
         # Get department name for display

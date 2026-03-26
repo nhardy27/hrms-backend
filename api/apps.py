@@ -14,6 +14,7 @@ class ApiConfig(AppConfig):
         """
         import api.UserProfile
         import api.Department.model
+        import api.Designation.model
         import api.AttendanceStatus.model
         
         import api.Attendance.model

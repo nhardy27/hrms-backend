@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from api.Department.model import Department
+from api.Designation.model import Designation
 
 # Extended user profile with employee details
 class UserProfile(models.Model):
@@ -30,7 +31,12 @@ class UserProfile(models.Model):
     )
 
     contact_no = models.CharField(max_length=15, null=True, blank=True)
-    designation = models.CharField(max_length=30, null=True, blank=True)
+    designation = models.ForeignKey(
+        Designation,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     date_of_joining = models.DateField(null=True, blank=True)
     status = models.BooleanField(default=True)
     address = models.TextField(null=True, blank=True)

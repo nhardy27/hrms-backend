@@ -8,6 +8,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
 from api.permissions import CustomPermission
+from api.Designation.model import Designation
 from datetime import datetime
 
 class UserViewset(ModelViewSet):
@@ -60,12 +61,20 @@ class UserViewset(ModelViewSet):
             except:
                 pass
         
+        # Resolve designation name from UUID if needed
+        designation_val = data.get('designation', '')
+        try:
+            desig_obj = Designation.objects.get(id=designation_val)
+            designation_val = desig_obj.name
+        except (Designation.DoesNotExist, Exception):
+            pass
+
         # Prepare email context
         context = {
             'candidate_name': f"{user.first_name} {user.last_name}",
             'candidate_email': user.email,
             'candidate_contact': data.get('candidate_contact', ''),
-            'designation': data.get('designation', ''),
+            'designation': designation_val,
             'department': data.get('department', ''),
             'joining_date': joining_date,
             'basic_salary': data.get('basic_salary', ''),

@@ -13,6 +13,7 @@ from api.CreateUser import views as createUserViews
 
 # Import HR module views
 from api.Department.view import DepartmentViewSet
+from api.Designation.view import DesignationViewSet
 from api.AttendanceStatus.view import AttendanceStatusViewSet
 from api.Attendance.view import AttendanceViewSet
 from api.Leave.view import LeaveViewSet
@@ -38,6 +39,7 @@ router.register(r'permission', permissionView.PermissionViewset, basename='permi
 
 # HR module endpoints
 router.register(r'department', DepartmentViewSet, basename='department')
+router.register(r'designation', DesignationViewSet, basename='designation')
 router.register(r'attendanceStatus', AttendanceStatusViewSet, basename='attendanceStatus')
 router.register(r'attendance', AttendanceViewSet, basename='attendance')
 router.register(r'leave', LeaveViewSet, basename='leave')

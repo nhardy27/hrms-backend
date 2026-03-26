@@ -25,6 +25,7 @@ class Command(BaseCommand):
         seed_scripts = [
             # Add your HR-related seed scripts here
             # Example: 'api.management.commands.seed_department',
+            'api.management.commands.seed_designation',
             # Example: 'api.management.commands.seed_attendance',
         ]
 

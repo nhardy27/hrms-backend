@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 # UserProfile serializer with department name display
 class UserProfileSerializer(serializers.ModelSerializer):
     department_name = serializers.SerializerMethodField(read_only=True)  # Display department name
+    designation_name = serializers.CharField(source='designation.name', read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
 
@@ -28,6 +29,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'department_name',
             'contact_no',
             'designation',
+            'designation_name',
             'date_of_joining',
             'status',
             'created_at',

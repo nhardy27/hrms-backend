@@ -34,7 +34,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             ifsc_code=data.get("ifsc_code"),
             department_id=data.get("department"),
             contact_no=data.get("contact_no"),
-            designation=data.get("designation"),
+            designation_id=data.get("designation"),
             date_of_joining=data.get("date_of_joining"),
             status=data.get("status", True)
         )
