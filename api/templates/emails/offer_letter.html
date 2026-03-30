@@ -3,35 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
-        .container { max-width: 700px; margin: 0 auto; border: 1px solid #ddd; padding: 30px; }
-        .header { text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #333; }
-        .header h1 { font-size: 22px; }
-        .company { margin-bottom: 25px; }
-        .company h2 { font-size: 15px; margin-bottom: 3px; }
-        .company p { font-size: 11px; color: #666; }
-        .date { text-align: right; font-size: 12px; color: #666; margin-bottom: 25px; }
-        .to { margin-bottom: 25px; font-size: 13px; line-height: 1.5; }
-        .content { font-size: 13px; line-height: 1.7; }
-        .content p { margin-bottom: 12px; }
-        .signature { margin-top: 35px; font-size: 13px; }
-        .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; text-align: center; font-size: 11px; color: #999; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 720px;
+            margin: auto;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        /* HEADER */
+        .header {
+            background: #1a3c5e;
+            padding: 24px 35px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .header-table td { vertical-align: middle; }
+        .header-title {
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .header-sub {
+            color: rgba(255,255,255,0.75);
+            font-size: 11px;
+            margin: 4px 0 0;
+        }
+        .header-badge {
+            background: #f0a500;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        /* META BAR */
+        .meta-bar {
+            background: #f8f9fb;
+            border-bottom: 1px solid #e8eaed;
+            padding: 12px 35px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .meta-table td {
+            font-size: 12px;
+            color: #555;
+            padding: 0;
+            width: 33.33%;
+        }
+        .meta-label {
+            display: block;
+            font-size: 10px;
+            font-weight: bold;
+            color: #1a3c5e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        /* BODY */
+        .body { padding: 30px 35px; }
+        .to-block {
+            background: #f0f5fb;
+            border-left: 4px solid #2d6a9f;
+            padding: 12px 16px;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 22px;
+        }
+        .content { font-size: 13px; line-height: 1.8; color: #444; }
+        .content p { margin: 0 0 14px; }
+        .section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #1a3c5e;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin: 22px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #dde3ea;
+        }
+        .salary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .salary-table th {
+            background: #1a3c5e;
+            color: #fff;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .salary-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eef0f3;
+        }
+        .salary-table tr:nth-child(even) td { background: #f8f9fb; }
+        .salary-table .total-row td {
+            font-weight: bold;
+            background: #e8f0fb !important;
+            color: #1a3c5e;
+            border-top: 2px solid #2d6a9f;
+        }
+        .terms ul {
+            margin: 8px 0;
+            padding-left: 18px;
+            font-size: 13px;
+            line-height: 1.9;
+            color: #555;
+        }
+        .signature-block {
+            margin-top: 35px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .sign-line {
+            border-top: 1px solid #aaa;
+            padding-top: 6px;
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+            width: 180px;
+        }
+        .footer {
+            background: #1a3c5e;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            font-size: 11px;
+            padding: 12px;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header"><h1>JOB OFFER LETTER</h1></div>
-        <div class="company"><h2>Humbingo Technologies Pvt. Ltd.</h2><p>📧 hr@humbingo.com | 📞 +91 81285 14266 | 🌐 www.humbingo.com</p></div>
-        <div class="date">{{ offer_date }}</div>
-        <div class="to"><strong>To:</strong><br>{{ candidate_name }}<br>{{ candidate_email }}<br>{{ candidate_contact }}</div>
-        <div class="content">
-            <p>Dear {{ candidate_name }},</p>
-            <p>We are pleased to offer you the position of <strong>{{ designation }}</strong> at <strong>Humbingo Technologies Pvt. Ltd.</strong>, starting on <strong>{{ joining_date }}</strong>. In this role, you will report to the <strong>{{ department }}</strong> department.</p>
-            <p>Your monthly salary will be <strong>INR {{ basic_salary|add:hra|add:allowance }}</strong> (Basic: ₹{{ basic_salary }}, HRA: ₹{{ hra }}, Allowance: ₹{{ allowance }}), along with benefits including health insurance, paid leave, internet allowance, and performance bonuses. Full details will be shared upon confirmation.</p>
-            <p>We look forward to having you onboard and seeing your contributions to our team.</p>
-        </div>
-        <div class="signature"><p>Warm Regards,</p><p style="margin-top: 30px;"><strong>HR Manager</strong><br>Humbingo Technologies Pvt. Ltd.</p></div>
-        <div class="footer"><p>This is a system-generated document.</p></div>
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td style="width:75%;">
+                    <div class="header-title">Humbingo Technologies Pvt. Ltd.</div>
+                    <div class="header-sub">hr@humbingo.com &nbsp;|&nbsp; +91 81285 14266</div>
+                </td>
+                <td style="width:25%; text-align:right; vertical-align:middle;">
+                    <div class="header-badge">Offer Letter</div>
+                </td>
+            </tr>
+        </table>
     </div>
+
+    <!-- META BAR -->
+    <div class="meta-bar">
+        <table class="meta-table">
+            <tr>
+                <td>
+                    <span class="meta-label">Reference No.</span>
+                    HT/HR/{{ joining_date|slice:":4" }}/OL
+                </td>
+                <td>
+                    <span class="meta-label">Department</span>
+                    {{ department }}
+                </td>
+                <td>
+                    <span class="meta-label">Date of Issue</span>
+                    {{ offer_date }}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="body">
+
+        <div class="to-block">
+            <strong>Addressed To:</strong><br>
+            {{ candidate_name }}<br>
+            {{ candidate_email }}<br>
+            {{ candidate_contact }}
+        </div>
+
+        <div class="content">
+            <p>Dear <strong>{{ candidate_name }}</strong>,</p>
+            <p>
+                We are pleased to offer you the position of <strong>{{ designation }}</strong> at
+                Humbingo Technologies Pvt. Ltd. Your joining date will be <strong>{{ joining_date }}</strong>,
+                and you will be part of the <strong>{{ department }}</strong> department.
+            </p>
+
+            <div class="section-title">Compensation Details</div>
+            <table class="salary-table">
+                <thead>
+                    <tr><th>Component</th><th>Amount (₹/month)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Basic Salary</td><td>₹{{ basic_salary }}</td></tr>
+                    <tr><td>House Rent Allowance (HRA)</td><td>₹{{ hra }}</td></tr>
+                    <tr><td>Special Allowance</td><td>₹{{ allowance }}</td></tr>
+                    <tr><td>PF Deduction (12% of Basic)</td><td>− ₹{{ pf_deduction }}</td></tr>
+                    <tr class="total-row"><td>Net Monthly Salary</td><td>₹{{ net_salary }}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="section-title">Terms &amp; Conditions</div>
+            <div class="terms">
+                <ul>
+                    <li>Probation period of <strong>3 months</strong> from the date of joining.</li>
+                    <li>All company rules, policies, and code of conduct must be followed.</li>
+                    <li>Strict confidentiality of company data and client information is required.</li>
+                    <li>A <strong>30-day notice period</strong> is required for resignation.</li>
+                </ul>
+            </div>
+
+            <p>Kindly sign and return a copy of this letter as your formal acceptance.</p>
+            <p>We look forward to welcoming you to the Humbingo Technologies family.</p>
+        </div>
+
+        <!-- SIGNATURE -->
+        <table class="signature-block">
+            <tr>
+                <td style="width:50%; padding-top:35px;">
+                    <div style="margin-bottom:30px; font-size:13px;">Yours sincerely,</div>
+                    <div class="sign-line">
+                        <strong>HR Manager</strong><br>
+                        Humbingo Technologies Pvt. Ltd.
+                    </div>
+                </td>
+                <td style="width:50%; text-align:right; padding-top:35px;">
+                    <div style="margin-bottom:30px; font-size:13px;">Candidate Acceptance</div>
+                    <div class="sign-line" style="margin-left:auto;">
+                        {{ candidate_name }}<br>
+                        Signature &amp; Date
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="footer">
+        Confidential &nbsp;|&nbsp; System Generated Document &nbsp;|&nbsp;
+        hr@humbingo.com &nbsp;|&nbsp; +91 81285 14266
+    </div>
+
+</div>
 </body>
 </html>

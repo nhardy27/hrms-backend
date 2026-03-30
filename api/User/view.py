@@ -70,6 +70,12 @@ class UserViewset(ModelViewSet):
             pass
 
         # Prepare email context
+        basic_salary = int(data.get('basic_salary', 0) or 0)
+        hra = int(data.get('hra', 0) or 0)
+        allowance = int(data.get('allowance', 0) or 0)
+        pf_deduction = round(basic_salary * 0.12)
+        net_salary = basic_salary + hra + allowance - pf_deduction
+
         context = {
             'candidate_name': f"{user.first_name} {user.last_name}",
             'candidate_email': user.email,
@@ -77,9 +83,11 @@ class UserViewset(ModelViewSet):
             'designation': designation_val,
             'department': data.get('department', ''),
             'joining_date': joining_date,
-            'basic_salary': data.get('basic_salary', ''),
-            'hra': data.get('hra', ''),
-            'allowance': data.get('allowance', ''),
+            'basic_salary': basic_salary,
+            'hra': hra,
+            'allowance': allowance,
+            'pf_deduction': pf_deduction,
+            'net_salary': net_salary,
             'offer_date': offer_date,
         }
 
