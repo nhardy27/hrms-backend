@@ -28,6 +28,16 @@ def get_user_and_display_name(token_key):
 
 
 @database_sync_to_async
+def get_room_participants(room_type, room_id):
+    """Return user_ids who have chatted in this room (excluding current logic — used for group rooms)."""
+    from api.Chat.model import ChatMessage
+    return list(
+        ChatMessage.objects.filter(room_type=room_type, room_id=str(room_id))
+        .values_list('sender_id', flat=True).distinct()
+    )
+
+
+@database_sync_to_async
 def save_message(sender, room_type, room_id, message):
     from api.Chat.model import ChatMessage
     return ChatMessage.objects.create(
@@ -124,6 +134,27 @@ class BaseChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
+        await self._notify_participants(message)
+
+    async def _notify_participants(self, message):
+        """Send WhatsApp-style notification to all room participants except sender."""
+        participant_ids = await get_room_participants(self.room_type, self.room_id)
+        for uid in participant_ids:
+            if uid != self.user.id:
+                await self.channel_layer.group_send(
+                    f'notification_{uid}',
+                    {
+                        'type': 'send_notification',
+                        'title': self.display_name,
+                        'message': message,
+                        'data': {
+                            'room_type': self.room_type,
+                            'room_id': self.room_id,
+                            'sender_id': self.user.id,
+                        },
+                    }
+                )
+
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({
             'type': 'message',
@@ -147,8 +178,8 @@ class PrivateChatConsumer(BaseChatConsumer):
             await self.close()
             return
 
-        receiver_id = self.scope['url_route']['kwargs']['room_id']
-        ids = sorted([str(self.user.id), str(receiver_id)])
+        self.receiver_id = int(self.scope['url_route']['kwargs']['room_id'])
+        ids = sorted([str(self.user.id), str(self.receiver_id)])
         self.room_id = f"{ids[0]}_{ids[1]}"
         self.room_group_name = get_room_name(self.room_type, self.room_id)
 
@@ -158,6 +189,22 @@ class PrivateChatConsumer(BaseChatConsumer):
         history = await get_chat_history(self.room_type, self.room_id)
         await self.send(text_data=json.dumps({'type': 'history', 'messages': history}))
 
+    async def _notify_participants(self, message):
+        """For private chat, notify only the receiver."""
+        await self.channel_layer.group_send(
+            f'notification_{self.receiver_id}',
+            {
+                'type': 'send_notification',
+                'title': self.display_name,
+                'message': message,
+                'data': {
+                    'room_type': self.room_type,
+                    'room_id': self.room_id,
+                    'sender_id': self.user.id,
+                },
+            }
+        )
+
 
 class DepartmentChatConsumer(BaseChatConsumer):
     room_type = 'department'
@@ -165,3 +212,31 @@ class DepartmentChatConsumer(BaseChatConsumer):
 
 class DesignationChatConsumer(BaseChatConsumer):
     room_type = 'designation'
+
+
+class NotificationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        token = extract_token(self.scope['query_string'])
+        self.user, _ = await get_user_and_display_name(token)
+
+        if not self.user:
+            await self.accept()
+            await self.send(text_data=json.dumps({'type': 'error', 'message': 'Invalid or expired token.'}))
+            await self.close()
+            return
+
+        self.group_name = f'notification_{self.user.id}'
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        if hasattr(self, 'group_name'):
+            await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
+    async def send_notification(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'notification',
+            'title': event.get('title', ''),
+            'message': event.get('message', ''),
+            'data': event.get('data', {}),
+        }))
