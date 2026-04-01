@@ -4,7 +4,6 @@ load_dotenv(override=True)
 from django.core.asgi import get_asgi_application
 
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
 import api.Websocket.routings
 
 ENV = os.getenv("ENV")
@@ -22,9 +21,7 @@ elif ENV == "production":
 # application = get_asgi_application()
 application = ProtocolTypeRouter({
     'http': get_asgi_application(),
-    'websocket': AuthMiddlewareStack(
-        URLRouter(
-            api.Websocket.routings.websocket_urlpatterns
-        )
+    'websocket': URLRouter(
+        api.Websocket.routings.websocket_urlpatterns
     ),
 })

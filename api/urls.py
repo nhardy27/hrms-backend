@@ -20,6 +20,7 @@ from api.Leave.view import LeaveViewSet
 from api.YearMaster.view import YearMasterViewSet
 from api.salary.view import SalaryViewSet
 from api.CustomAPI.adminDashboard import AdminDashboardAPIView
+from api.Chat.views import EmployeeListView, ChatHistoryView
 
 # REST Framework and Swagger imports
 from rest_framework import routers
@@ -78,5 +79,6 @@ urlpatterns = [
     path('createUser/', createUserViews.CreateUserAPI.as_view(), name='create-user'),
     # Dashboard endpoint
     path('adminDashboard/', AdminDashboardAPIView.as_view(), name='admin-dashboard'),
-
+    path('chat/employees/', EmployeeListView.as_view(), name='chat-employees'),
+    path('chat/history/', ChatHistoryView.as_view(), name='chat-history'),
 ]

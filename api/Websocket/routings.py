@@ -1,7 +1,8 @@
-# from django.urls import path
-# from api.Websocket.consumers import MyConsumer, ChatConsumer, modelChatConsumer
+from django.urls import path
+from api.Websocket.consumers import PrivateChatConsumer, DepartmentChatConsumer, DesignationChatConsumer
+
 websocket_urlpatterns = [
-#     path('ws/test/', MyConsumer.as_asgi()),
-#     path('ws/chat/<str:room_name>/<str:username>/', ChatConsumer.as_asgi()),
-#     path('ws/modelChat/', modelChatConsumer.as_asgi()),
+    path('ws/chat/private/<str:room_id>/', PrivateChatConsumer.as_asgi()),
+    path('ws/chat/department/<str:room_id>/', DepartmentChatConsumer.as_asgi()),
+    path('ws/chat/designation/<str:room_id>/', DesignationChatConsumer.as_asgi()),
 ]

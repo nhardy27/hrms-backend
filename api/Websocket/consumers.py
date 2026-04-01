@@ -1,256 +1,167 @@
-# from channels.generic.websocket import WebsocketConsumer
-# import json
-# from django.contrib.auth.models import User
-# from asgiref.sync import async_to_sync
-# from api.TestAPI.model import Test
-
-# # for test
-# class MyConsumer(WebsocketConsumer):
-#     def connect(self):
-#         self.accept()
-#     def disconnect(self, close_code):
-#         pass
-#     def receive(self, text_data):
-#         self.send(text_data=text_data)
+import json
+from urllib.parse import parse_qs
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import AccessToken
 
 
-# # chat
-# class ChatConsumer(WebsocketConsumer):
-#     def connect(self):
-#         self.room_name = self.scope['url_route']['kwargs']['room_name']
-#         self.username = self.scope['url_route']['kwargs']['username']
-#         self.room_group_name = f'chat_{self.room_name}'
-
-#         # Check if the user exists
-#         if not User.objects.filter(username=self.username).exists():
-#             self.close()
-#             return
-
-#         # Add user to the users list (bypassing approval)
-#         if not hasattr(self.channel_layer, 'users'):
-#             self.channel_layer.users = {}
-#         if self.room_group_name not in self.channel_layer.users:
-#             self.channel_layer.users[self.room_group_name] = []
-#         self.channel_layer.users[self.room_group_name].append(self.username)
-
-#         # Add user to the group
-#         async_to_sync(self.channel_layer.group_add)(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-
-#         self.accept()
-
-#         # Notify the room that a user has joined
-#         async_to_sync(self.channel_layer.group_send)(
-#             self.room_group_name,
-#             {
-#                 'type': 'user_joined',
-#                 'username': self.username,
-#                 'message': f'{self.username} has joined the chat.'
-#             }
-#         )
-
-#     def disconnect(self, close_code):
-#         # Remove user from the room group
-#         async_to_sync(self.channel_layer.group_discard)(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-
-#         # Remove user from the users list
-#         if self.username in self.channel_layer.users.get(self.room_group_name, []):
-#             self.channel_layer.users[self.room_group_name].remove(self.username)
-
-#         # Notify the room that the user has left
-#         async_to_sync(self.channel_layer.group_send)(
-#             self.room_group_name,
-#             {
-#                 'type': 'user_left',
-#                 'username': self.username,
-#                 'message': f'{self.username} has left the chat.'
-#             }
-#         )
-
-#     def receive(self, text_data):
-#         text_data_json = json.loads(text_data)
-#         message = text_data_json.get('message', '')
-
-#         # Broadcast the message to all users in the room
-#         async_to_sync(self.channel_layer.group_send)(
-#             self.room_group_name,
-#             {
-#                 'type': 'chat_message',
-#                 'message': message,
-#                 'username': self.username
-#             }
-#         )
-
-#     def chat_message(self, event):
-#         message = event['message']
-#         username = event['username']
-
-#         # Send the message to WebSocket
-#         self.send(text_data=json.dumps({
-#             'username': username,
-#             'message': message
-#         }))
-
-#     def user_joined(self, event):
-#         message = event['message']
-#         username = event['username']
-
-#         # Send join message to WebSocket
-#         self.send(text_data=json.dumps({
-#             'username': username,
-#             'message': message
-#         }))
-
-#     def user_left(self, event):
-#         message = event['message']
-#         username = event['username']
-
-#         # Send leave message to WebSocket
-#         self.send(text_data=json.dumps({
-#             'username': username,
-#             'message': message
-#         }))
+def get_room_name(room_type, room_id):
+    return f"chat_{room_type}_{room_id}"
 
 
-# # response from model by keyword(s)
-# class modelChatConsumer(WebsocketConsumer):
-#     def connect(self):
-#         # Use a default room name, or you can generate one dynamically
-#         self.room_name = "default_room"
-#         self.username = self.scope['user'].username if self.scope['user'].is_authenticated else "guest"
-#         self.room_group_name = f'chat_{self.room_name}'
+@database_sync_to_async
+def get_user_and_display_name(token_key):
+    """Fetch user + display name in a single DB call."""
+    from api.UserProfile.model import UserProfile
+    try:
+        token = AccessToken(token_key)
+        user = User.objects.get(id=token['user_id'])
+        try:
+            profile = UserProfile.objects.get(user=user)
+            display_name = f"{profile.first_name or ''} {profile.last_name or ''}".strip() or user.username
+        except UserProfile.DoesNotExist:
+            display_name = user.username
+        return user, display_name
+    except Exception:
+        return None, None
 
-#         # Add user to the users list (bypassing approval)
-#         if not hasattr(self.channel_layer, 'users'):
-#             self.channel_layer.users = {}
-#         if self.room_group_name not in self.channel_layer.users:
-#             self.channel_layer.users[self.room_group_name] = []
-#         self.channel_layer.users[self.room_group_name].append(self.username)
 
-#         # Add user to the group
-#         async_to_sync(self.channel_layer.group_add)(
-#             self.room_group_name,
-#             self.channel_name
-#         )
+@database_sync_to_async
+def save_message(sender, room_type, room_id, message):
+    from api.Chat.model import ChatMessage
+    return ChatMessage.objects.create(
+        sender=sender,
+        room_type=room_type,
+        room_id=str(room_id),
+        message=message
+    )
 
-#         self.accept()
 
-#         # Notify the room that a user has joined
-#         async_to_sync(self.channel_layer.group_send)(
-#             self.room_group_name,
-#             {
-#                 'type': 'user_joined',
-#                 'username': self.username,
-#                 'message': f'{self.username} has joined the chat.'
-#             }
-#         )
+@database_sync_to_async
+def get_chat_history(room_type, room_id):
+    from api.Chat.model import ChatMessage
+    from api.UserProfile.model import UserProfile
+    messages = list(
+        ChatMessage.objects.filter(
+            room_type=room_type,
+            room_id=str(room_id)
+        ).select_related('sender').order_by('created_at')[:50]
+    )
 
-#     def disconnect(self, close_code):
-#         # Remove user from the room group
-#         async_to_sync(self.channel_layer.group_discard)(
-#             self.room_group_name,
-#             self.channel_name
-#         )
+    sender_ids = [m.sender_id for m in messages]
+    profiles = {p.user_id: p for p in UserProfile.objects.filter(user_id__in=sender_ids)}
 
-#         # Remove user from the users list
-#         if self.username in self.channel_layer.users.get(self.room_group_name, []):
-#             self.channel_layer.users[self.room_group_name].remove(self.username)
+    result = []
+    for m in messages:
+        profile = profiles.get(m.sender_id)
+        if profile:
+            display_name = f"{profile.first_name or ''} {profile.last_name or ''}".strip() or m.sender.username
+        else:
+            display_name = m.sender.username
+        result.append({
+            'sender_id': m.sender.id,
+            'sender': display_name,
+            'message': m.message,
+            'timestamp': m.created_at.isoformat()
+        })
+    return result
 
-#         # Notify the room that the user has left
-#         async_to_sync(self.channel_layer.group_send)(
-#             self.room_group_name,
-#             {
-#                 'type': 'user_left',
-#                 'username': self.username,
-#                 'message': f'{self.username} has left the chat.'
-#             }
-#         )
 
-#     def receive(self, text_data):
-#         text_data_json = json.loads(text_data)
-#         message = text_data_json.get('message', '')
+def extract_token(query_string):
+    params = parse_qs(query_string.decode())
+    tokens = params.get('token', [])
+    return tokens[0] if tokens else None
 
-#         # Process the message and get the response
-#         response_message = self.process_message(message)
 
-#         # Send the response message to the user
-#         self.send(text_data=json.dumps({
-#             # 'username': 'System',
-#             'message': response_message
-#         }))
+class BaseChatConsumer(AsyncWebsocketConsumer):
+    room_type = None
 
-#         # Broadcast the message to all users in the room
-#         async_to_sync(self.channel_layer.group_send)(
-#             self.room_group_name,
-#             {
-#                 'type': 'chat_message',
-#                 'message': message,
-#                 'username': self.username
-#             }
-#         )
+    async def connect(self):
+        token = extract_token(self.scope['query_string'])
+        self.user, self.display_name = await get_user_and_display_name(token)
 
-#     def process_message(self, message):
-#         # Check if the message starts with 'info:'
-#         if message.startswith("info:"):
-#             name = message[5:].strip()  # Extract the name after 'info:'
-            
-#             # Query the TestAPI model based on the name
-#             test_objects = Test.objects.filter(name__iexact=name)  # Case-insensitive lookup
-            
-#             count = test_objects.count()  # Count how many objects were found
-            
-#             if count > 0:
-#                 response_list = [f"Found {count} object(s) with the name '{name}':\n"]
-                
-#                 # Iterate over all matching objects and format their details
-#                 for test in test_objects:
-#                     test_info = {
-#                         "ID": str(test.id),
-#                         "name": test.name,
-#                         "description": test.description,
-#                         "address": test.address,
-#                     }
-#                     # Convert the object details to a formatted string and append to the response list
-#                     response_list.append("\n".join([f"{key}: {value}" for key, value in test_info.items()]))
+        if not self.user:
+            await self.accept()
+            await self.send(text_data=json.dumps({'type': 'error', 'message': 'Invalid or expired token.'}))
+            await self.close()
+            return
 
-#                 # Join all employee details into a single string
-#                 return "\n\n".join(response_list)
-#             else:
-#                 return f'No object of TestAPI found with name: {name}'
-#         else:
-#             return 'Invalid command. Please use "info:<name>" to get test_object details.'
+        self.room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room_group_name = get_room_name(self.room_type, self.room_id)
 
-#     def chat_message(self, event):
-#         message = event['message']
-#         username = event['username']
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.accept()
 
-#         # Send the message to WebSocket
-#         self.send(text_data=json.dumps({
-#             'username': username,
-#             'message': message
-#         }))
+        history = await get_chat_history(self.room_type, self.room_id)
+        await self.send(text_data=json.dumps({'type': 'history', 'messages': history}))
 
-#     def user_joined(self, event):
-#         message = event['message']
-#         username = event['username']
+    async def disconnect(self, close_code):
+        if hasattr(self, 'room_group_name'):
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
-#         # Send join message to WebSocket
-#         self.send(text_data=json.dumps({
-#             'username': username,
-#             'message': message
-#         }))
+    async def receive(self, text_data):
+        try:
+            data = json.loads(text_data)
+        except (json.JSONDecodeError, ValueError):
+            await self.send(text_data=json.dumps({'type': 'error', 'message': 'Invalid JSON.'}))
+            return
 
-#     def user_left(self, event):
-#         message = event['message']
-#         username = event['username']
+        message = data.get('message', '').strip()
+        if not message:
+            return
 
-#         # Send leave message to WebSocket
-#         self.send(text_data=json.dumps({
-#             'username': username,
-#             'message': message
-#         }))
+        saved = await save_message(self.user, self.room_type, self.room_id, message)
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'sender_id': self.user.id,
+                'sender': self.display_name,
+                'message': message,
+                'timestamp': saved.created_at.isoformat(),
+            }
+        )
+
+    async def chat_message(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'message',
+            'sender_id': event['sender_id'],
+            'sender': event['sender'],
+            'message': event['message'],
+            'timestamp': event['timestamp'],
+        }))
+
+
+class PrivateChatConsumer(BaseChatConsumer):
+    room_type = 'private'
+
+    async def connect(self):
+        token = extract_token(self.scope['query_string'])
+        self.user, self.display_name = await get_user_and_display_name(token)
+
+        if not self.user:
+            await self.accept()
+            await self.send(text_data=json.dumps({'type': 'error', 'message': 'Invalid or expired token.'}))
+            await self.close()
+            return
+
+        receiver_id = self.scope['url_route']['kwargs']['room_id']
+        ids = sorted([str(self.user.id), str(receiver_id)])
+        self.room_id = f"{ids[0]}_{ids[1]}"
+        self.room_group_name = get_room_name(self.room_type, self.room_id)
+
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.accept()
+
+        history = await get_chat_history(self.room_type, self.room_id)
+        await self.send(text_data=json.dumps({'type': 'history', 'messages': history}))
+
+
+class DepartmentChatConsumer(BaseChatConsumer):
+    room_type = 'department'
+
+
+class DesignationChatConsumer(BaseChatConsumer):
+    room_type = 'designation'

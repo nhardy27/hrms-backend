@@ -21,6 +21,7 @@ class ApiConfig(AppConfig):
         import api.Leave.model     
         import api.YearMaster.model
         import api.salary.model
+        import api.Chat.model
    
      
         
