@@ -5,18 +5,17 @@ from api.UserProfile.model import UserProfile
 from api.Department.model import Department
 from api.Attendance.model import Attendance
 
-# User serializer with embedded UserProfile fields
 class UserSerializer(serializers.ModelSerializer):
     groups = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Group.objects.all(),
         required=False
     )
-    # UserProfile fields exposed at User level
+    # Extra write-only fields sourced from UserProfile, not part of User model
     contact_no = serializers.CharField(max_length=15, required=False)
     department = serializers.UUIDField(required=False)
     designation = serializers.UUIDField(required=False)
-    designation_name = serializers.SerializerMethodField()
+    designation_name = serializers.SerializerMethodField()  # Resolved via UserProfile.designation FK
     date_of_joining = serializers.DateField(required=False)
     address = serializers.CharField(required=False)
     bank_name = serializers.CharField(max_length=100, required=False)
@@ -25,21 +24,21 @@ class UserSerializer(serializers.ModelSerializer):
     basic_salary = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     hra = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     allowance = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
-    department_name = serializers.SerializerMethodField()  # Read-only department name
+    department_name = serializers.SerializerMethodField()  # Read-only department name resolved from FK
     
     class Meta:
         model = User
         fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'groups', 'is_staff', 'is_active', 'contact_no', 'department', 'department_name', 'designation', 'designation_name', 'date_of_joining', 'address', 'bank_name', 'bank_account_number', 'ifsc_code', 'basic_salary', 'hra', 'allowance']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True}  # Never expose password in response
         }
 
     def to_representation(self, instance):
-        # Include UserProfile fields in response
+        # Append UserProfile fields to the default User representation
         representation = super().to_representation(instance)
         
         try:
-            profile = instance.userprofile
+            profile = instance.userprofile  # Access related UserProfile via reverse OneToOne
             representation['emp_code'] = profile.emp_code
             representation['contact_no'] = profile.contact_no
             representation['department'] = str(profile.department_id) if profile.department_id else None
@@ -55,6 +54,7 @@ class UserSerializer(serializers.ModelSerializer):
             representation['hra'] = profile.hra
             representation['allowance'] = profile.allowance
         except UserProfile.DoesNotExist:
+            # Return None for all profile fields if UserProfile not yet created
             representation['emp_code'] = None
             representation['contact_no'] = None
             representation['department'] = None
@@ -73,7 +73,7 @@ class UserSerializer(serializers.ModelSerializer):
         return representation
 
     def create(self, validated_data):
-        # Extract profile data and create User with UserProfile
+        # Separate UserProfile fields before creating the User instance
         groups_data = validated_data.pop('groups', [])
         profile_data = {
             'contact_no': validated_data.pop('contact_no', None),
@@ -90,13 +90,13 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
         if 'password' in validated_data:
-            validated_data['password'] = make_password(validated_data['password'])
+            validated_data['password'] = make_password(validated_data['password'])  # Hash before saving
         
         user = super().create(validated_data)
         user.groups.set(groups_data)
         self._update_user_permissions(user)
 
-        # Create UserProfile
+        # Create linked UserProfile, skipping None values to preserve model defaults
         UserProfile.objects.create(
             user=user,
             first_name=user.first_name,
@@ -107,7 +107,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
-        # Update User and UserProfile
+        # Separate UserProfile fields before updating the User instance
         groups_data = validated_data.pop('groups', [])
         profile_data = {
             'contact_no': validated_data.pop('contact_no', None),
@@ -124,19 +124,19 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
         if 'password' in validated_data:
-            validated_data['password'] = make_password(validated_data['password'])
+            validated_data['password'] = make_password(validated_data['password'])  # Hash before saving
 
         instance = super().update(instance, validated_data)
         instance.groups.set(groups_data)
         self._update_user_permissions(instance)
 
-        # Update UserProfile
+        # get_or_create ensures UserProfile exists even if it was missing
         profile, created = UserProfile.objects.get_or_create(user=instance)
-        profile.first_name = instance.first_name
+        profile.first_name = instance.first_name  # Keep UserProfile name in sync with User
         profile.last_name = instance.last_name
         
         for key, value in profile_data.items():
-            if value is not None:
+            if value is not None:  # Skip None to avoid overwriting existing values with empty input
                 setattr(profile, key, value)
         
         profile.save()
@@ -144,13 +144,14 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
     def _update_user_permissions(self, user):
-        # Sync user permissions from groups
+        # Aggregate all permissions from assigned groups and apply directly to user
         permissions = set()
         for group in user.groups.all():
             permissions.update(group.permissions.all())
         user.user_permissions.set(permissions)
 
     def get_designation_name(self, obj):
+        # Return designation name string to avoid exposing raw UUID in response
         try:
             profile = obj.userprofile
             return profile.designation.name if profile.designation else None
@@ -158,7 +159,7 @@ class UserSerializer(serializers.ModelSerializer):
             return None
 
     def get_department_name(self, obj):
-        # Get department name for display
+        # Lookup department name by UUID stored in UserProfile
         try:
             profile = obj.userprofile
             if profile.department_id:
